@@ -38,7 +38,7 @@ Contract (pyproject at the commit below):
   flash-attn        : 2.8.3   (prebuilt from verl-wheelhouse index, no source build)
   ray               : 2.55.1  (lock)
   flashinfer-python : 0.6.11.post1 / 0.6.12 (per-backend)
-Status              : IN PROGRESS at time of writing -- see logs/uv_sync.log
+Status              : COMPLETE -- CU130_STACK_VALIDATED = PASS (see analysis/PRE_RL_GATE_REPORT.md)
 Resolved pip freeze : manifests/pip_freeze.txt (written once the sync completes)
 
 --------------------- REPOSITORIES ----------------------
@@ -60,3 +60,25 @@ Model               : Qwen/Qwen3-8B  (post-trained release; NOT -Base, NOT VL)
 Train dataset       : BytedTsinghua-SIA/DAPO-Math-17k
 Validation          : AIME 2024
 Details             : manifests/model.md , manifests/dataset.md
+
+--------------------- VALIDATED RUNTIME (measured) ------
+Python              : 3.12.3
+torch               : 2.11.0+cu130
+torch CUDA          : 13.0
+NCCL (venv)         : 2.28.9
+vllm                : 0.24.0
+transformers        : 5.9.0
+ray                 : 2.55.1
+flash-attn          : 2.8.3
+flashinfer-python   : 0.6.12
+triton              : 3.6.0
+tensordict          : 0.10.0
+verl                : 0.10.0.dev0
+BF16 CUDA           : PASS
+FlashAttention sm90 : PASS (max|fa-sdpa| = 0.0078 bf16)
+vLLM Qwen3-8B       : PASS (load 118.3s; peak 60.11 GiB @ gpu_mem_util 0.60)
+4-GPU NCCL cu130    : PASS (349.8 GB/s busBW @1GB, spread 0.04%)
+
+NOTE: uv.lock PyPI urls retargeted to mirrors.aliyun.com (INC-003).
+      Versions and all 1413 sha256 hashes unchanged and still verified by uv.
+      Upstream copy: system/uv.lock.upstream.bak ; revert: git checkout uv.lock

@@ -190,3 +190,113 @@ was worth more than any single fix.
 
 ### Lesson
 ```
+
+---
+
+## INC-003 — `uv sync` at 0.1 MB/s: PyPI unreachable at speed, and `--frozen` pins the mirror
+
+**Date / stage:** 2026-09-10, environment build (pre-R0).
+**Run / step:** n/a.
+
+### Observed symptom
+
+After INC-001 and INC-002 were fixed, `uv sync` ran without errors but crawled. Measured by
+sampling `du -sb` on `UV_CACHE_DIR`:
+
+```
+cache delta over 60s: 6 MB   =>  0.10 MB/s
+```
+
+~5 GB of wheels remained (vllm 266 MB, cudnn 349 MB, cublas 403 MB, flashinfer-cubin 427 MB, ...).
+At that rate the environment build alone was ~1.5 hours of paid GPU time.
+
+### Hypotheses
+
+1. The node's network is simply slow.
+2. The academic proxy is throttling.
+3. PyPI specifically is slow from this node.
+4. uv is misconfigured / not parallelising.
+
+### Evidence checked
+
+**(1) is false.** The Qwen3-8B download had just pulled 16 GB from `hf-mirror.com` in ~9 minutes,
+about 30 MB/s. The node has bandwidth.
+
+**(3) is true, dramatically.** Same 30-40 MB byte-range request for the *same* `vllm-0.24.0` wheel,
+against five hosts:
+
+| source | throughput |
+|---|---|
+| `mirrors.aliyun.com` | **63.01 MB/s** |
+| `mirrors.bfsu.edu.cn` | 48.14 MB/s |
+| `repo.huaweicloud.com` | 8.95 MB/s |
+| `pypi.tuna.tsinghua.edu.cn` | 6.57 MB/s |
+| `mirrors.ustc.edu.cn` | 0.83 MB/s |
+| `files.pythonhosted.org` **direct** | **0.04 MB/s** |
+| `files.pythonhosted.org` via proxy | 0.05 MB/s |
+
+**(2) is partly true but not the cause.** Setting `UV_DEFAULT_INDEX` to a fast mirror changed
+nothing — throughput stayed at 0.4-1.2 MB/s. Socket-level proof, by mapping the uv process's
+`/proc/<pid>/fd` socket inodes against `/proc/net/tcp`:
+
+- with the proxy exported: 12 established connections, **all** to `<internal-proxy>:<port>` (the proxy);
+- with the proxy unset: connections to `151.101.64.223:443` — Fastly, i.e.
+  `files.pythonhosted.org`.
+
+So uv was still fetching from PyPI while `UV_DEFAULT_INDEX` pointed at a mirror.
+
+### Root cause
+
+Two independent causes stacked:
+
+1. `files.pythonhosted.org` is effectively unusable from this node (~40 KB/s), whether direct or
+   proxied.
+2. **`uv sync --frozen` ignores `UV_DEFAULT_INDEX`.** `uv.lock` records a fully-qualified
+   `url = "https://files.pythonhosted.org/packages/..."` for every one of its 1377 PyPI artifacts,
+   and `--frozen` means "install exactly what the lock says" — including the host. An index
+   override only affects *resolution*, and `--frozen` skips resolution entirely.
+
+### Fix
+
+Retarget the lock's mirror host, leaving resolution untouched. The Aliyun mirror uses the identical
+`packages/<a>/<b>/<hash>/<file>` layout, so it is a pure host substitution:
+
+```bash
+cp uv.lock system/uv.lock.upstream.bak          # revertible; also tracked in verl's git
+sed -i 's|https://files\.pythonhosted\.org/|https://mirrors.aliyun.com/pypi/|g' uv.lock
+```
+
+Why this is safe rather than a version change:
+
+- **No version, package or dependency edge is modified.** Verified by round-tripping the
+  substitution and diffing against the upstream lock: zero non-URL differences.
+- **All 1413 `sha256` hashes are untouched** (count identical before and after), and uv verifies
+  every downloaded artifact against them. A mirror serving anything other than the exact upstream
+  bytes would fail the hash check, so package identity stays cryptographically enforced.
+- Fully reversible: `git checkout uv.lock` in the verl repo, or the backup above.
+
+Then run with the proxy on and `no_proxy` covering the mirror, so PyPI artifacts go direct to
+Aliyun while GitHub-hosted artifacts still traverse the proxy.
+
+### Post-fix evidence
+
+```
+cache delta 100s: 4661 MB  =>  46.62 MB/s
+```
+
+**0.10 MB/s -> 46.62 MB/s, a ~460x speedup.** `uv sync` then completed with no errors, producing an
+11 GB venv, and every validation gate that followed (torch cu130, flash-attn kernel, vLLM, 4-rank
+NCCL) passed on the resulting environment.
+
+### Lesson
+
+Two lessons, and the second is the more general one:
+
+1. When a download is slow in a restricted-network region, **measure per-host throughput before
+   changing any configuration**. The fix was a mirror, and the mirrors differ from each other by
+   75x — picking one without measuring would likely have picked `ustc` (0.83 MB/s) or `tuna`
+   (6.57 MB/s) over `aliyun` (63 MB/s).
+2. **Know which knob a flag disables.** `UV_DEFAULT_INDEX` looked like the obvious fix and was
+   silently a no-op, because `--frozen` bypasses resolution. Two attempts were spent on it before
+   the socket dump settled the question. Guessing at configuration is slower than measuring what a
+   process is actually connected to.
