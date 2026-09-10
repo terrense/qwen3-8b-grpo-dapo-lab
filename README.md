@@ -141,6 +141,127 @@ dynamic sampling makes "100 updates" a non-comparable unit across arms.
 
 ---
 
+---
+
+## Algorithm Deep Dive
+
+Each method changes **one specific layer**. The formulas below are the intervention; the
+per-algorithm notes carry the source citations, the measured evidence and the falsification
+plan.
+
+```mermaid
+flowchart TB
+    R["reward r_i from RLVR verifier<br/>r ∈ {+1, −1}"] --> B{"baseline?"}
+    B -->|"siblings in the group"| CF["critic-free family"]
+    B -->|"learned V(s)"| VB["value-based"]
+    CF --> N{"normalise by group std?"}
+    N -->|yes| G["<b>GRPO</b> · control<br/>Â = (r−mean)/(std+ε)"]
+    N -->|"no · remove bias"| DR["<b>Dr.GRPO</b><br/>Â = r−mean<br/>+ constant loss divisor"]
+    G --> RT{"ratio granularity?"}
+    RT -->|"per token"| DA["<b>DAPO</b><br/>clip-higher 0.2/0.28<br/>+ dynamic sampling"]
+    RT -->|"per sequence"| GS["<b>GSPO</b><br/>s_i = (π_θ/π_old)^(1/|y_i|)"]
+    VB --> VA["<b>VAPO</b><br/>GAE + length-adaptive λ<br/>NOT IMPLEMENTED upstream"]
+    style G fill:#ddf4ff,stroke:#0969da
+    style DR fill:#dafbe1,stroke:#1a7f37
+    style DA fill:#fff8c5,stroke:#bf8700
+    style GS fill:#fbefff,stroke:#8250df
+    style VA fill:#ffebe9,stroke:#cf222e
+```
+
+### GRPO — the control · [notes](docs/algorithms/grpo.md)
+
+Token-level ratio, group-normalised outcome advantage broadcast to every token:
+
+$$
+\mathcal{J}_{\text{GRPO}}=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\min\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\Big)\right],
+\qquad
+\hat A_i=\frac{r_i-\operatorname{mean}(\mathbf r)}{\operatorname{std}(\mathbf r)+\varepsilon}
+$$
+
+**Measured here:** verl uses the *unbiased* $(n{-}1)$ std, which makes the advantage extrema a
+direct readout of group composition. R1 ($G=8$) logged exactly `2.4749 / 1.6202 / 1.2076` —
+the $k=1,2,3$ correct-of-8 cases:
+
+$$
+\lvert\hat A\rvert_{k=1}=\frac{1.75}{\sqrt{0.5}}=2.4749,\qquad
+\lvert\hat A\rvert_{k=2}=\frac{1.5}{0.9258}=1.6202,\qquad
+\lvert\hat A\rvert_{k=3}=\frac{1.25}{1.0351}=1.2076
+$$
+
+When a group is unanimous, $\operatorname{std}=0$ **and** $r_i-\operatorname{mean}=0$, so
+$\hat A_i=0$ — that prompt contributes *no gradient at all*. Tracked as
+`effective_signal_fraction`; R1 measured **63.75%** overall.
+
+### Dr.GRPO — bias correction · [notes](docs/algorithms/dr_grpo.md)
+
+Removes **two** biases independently, so it is one experiment with two falsifiable claims:
+
+$$
+\underbrace{\hat A_i=\frac{r_i-\operatorname{mean}(\mathbf r)}{\operatorname{std}(\mathbf r)+\varepsilon}\ \longrightarrow\ r_i-\operatorname{mean}(\mathbf r)}_{\text{bias 1: difficulty re-weighting}}
+\qquad
+\underbrace{\frac{1}{\lvert y_i\rvert}\sum_t \ell_{i,t}\ \longrightarrow\ \frac{1}{C}\sum_t \ell_{i,t}}_{\text{bias 2: length}}
+$$
+
+Bias 2 is the sharp one: dividing by $\lvert y_i\rvert$ makes a long wrong answer's *per-token*
+penalty $1/\lvert y_i\rvert$ as large as a short one's, so padding a failure dilutes its
+gradient. A constant divisor $C$ removes the incentive.
+
+### DAPO — group-signal engineering · [notes](docs/algorithms/dapo.md)
+
+Four mechanisms. Asymmetric clipping, so low-probability tokens get absolute headroom:
+
+$$
+\min\Big(\rho\hat A,\ \operatorname{clip}\big(\rho,1-\epsilon_{\text{low}},1+\epsilon_{\text{high}}\big)\hat A\Big),\qquad \epsilon_{\text{low}}=0.2,\ \epsilon_{\text{high}}=0.28
+$$
+
+Dynamic sampling keeps only groups that actually carry signal, $0<\lvert\{i:r_i=1\}\rvert<G$,
+and regenerates the rest. Token-level aggregation divides by the batch token total
+$\sum_i\lvert y_i\rvert$. Overlong shaping replaces the truncation cliff with a linear ramp
+(verbatim from `reward_manager/dapo.py:126`):
+
+$$
+R_{\text{overlong}}(y)=\min\!\left(-\frac{\lvert y\rvert-(L_{\max}-L_{\text{buf}})}{L_{\text{buf}}}\cdot\alpha,\ 0\right)
+$$
+
+### GSPO — sequence-level · [notes](docs/algorithms/gspo.md)
+
+Moves the ratio, and therefore the **clipping decision**, from token to sequence — the
+length-normalised geometric mean of token ratios:
+
+$$
+s_i(\theta)=\left(\frac{\pi_\theta(y_i\mid x)}{\pi_{\theta_{\text{old}}}(y_i\mid x)}\right)^{1/\lvert y_i\rvert}=\exp\!\left(\frac{1}{\lvert y_i\rvert}\sum_{t=1}^{\lvert y_i\rvert}\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}\right)
+$$
+
+verl implements it natively (`core_algos.py:1546`) with a stop-gradient identity, so the
+*value* is the sequence ratio while the *gradient* still flows per token:
+
+$$
+s_{i,t}(\theta)=\operatorname{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t})}{\operatorname{sg}\big[\pi_\theta(y_{i,t})\big]}
+$$
+
+> **Prerequisite, established by measurement.** R0 ran $\rho\equiv1$ exactly
+> (`mini == train`), making clipping structurally zero. R1 fixed that (`8 < 16`) and got
+> $\rho\neq1$ — but clip fraction is only **1.5e-4**, so $\rho\approx1$ still. **A GSPO arm at
+> lr 1e-6 would compare two ratios that are both ≈1.** It needs a larger `train/mini` ratio
+> or a higher LR to have anything to measure.
+
+### VAPO — cross-paradigm · [notes](docs/algorithms/vapo.md) · [feasibility](analysis/vapo_feasibility.md)
+
+The only arm that replaces the sibling baseline with a learned value function, giving
+per-token credit instead of one scalar per response:
+
+$$
+\delta_t=r_t+\gamma V(s_{t+1})-V(s_t),\qquad
+\hat A_t^{\text{GAE}(\gamma,\lambda)}=\sum_{l=0}^{T-t-1}(\gamma\lambda)^l\delta_{t+l}
+$$
+
+The effective credit horizon is $\approx 1/(1-\gamma\lambda)$, so at fixed $\lambda$ credit
+decays geometrically and early tokens of a long chain of thought get almost nothing. VAPO's
+contribution is making $\lambda$ scale with $\lvert y\rvert$ — and **that is precisely the
+piece with no implementation** in verl or verl-recipe.
+
+---
+
 ## Observability Stack
 
 | Layer | Signals recorded | Failure modes it separates |
@@ -185,32 +306,40 @@ The status block above is the only region of this file written automatically
 
 ---
 
-## Latest Diagnostics — R0
+## Latest Diagnostics — R1 vanilla GRPO, 20 updates
 
-First real GRPO updates, recorded end to end
-([full report](analysis/R0_smoke_report.md) · [figures](experiments/R0_grpo_smoke/figures)):
+Full analysis: [`analysis/R1_baseline_report.md`](analysis/R1_baseline_report.md) ·
+figures: [`experiments/R1_grpo_baseline/figures`](experiments/R1_grpo_baseline/figures)
 
-| metric | update 1 | update 2 |
-|---|---|---|
-| reward mean | −0.1875 | −0.3750 |
-| grad norm | 0.2547 | 0.2123 |
-| entropy | 0.3430 | 0.3417 |
-| `ppo_kl` / clip fraction | **0.0 / 0.0** | **0.0 / 0.0** |
-| advantage min / max | **−1.5 / +1.5** | −1.5 / +1.5 |
-| effective signal fraction | 50.0% | **62.5%** |
-| response length mean | 1532 | 2041 |
-| truncation rate | 3.13% | 9.38% |
-| step wall time | 64.80 s | 41.84 s |
-| peak actor VRAM | 40.52 GiB | 40.52 GiB |
+| quantity | R1 result |
+|---|---|
+| optimizer updates | **20 / 20**, launcher exit 0, ~30 min on 4xH20 |
+| rollouts | **2560** (320 distinct prompts x G=8) |
+| `actor/pg_clipfrac` | **5.07e-5 - 2.61e-4** (mean 1.54e-4) - nonzero but ~0.015% of tokens |
+| `actor/ppo_kl` | **-5.44e-5 ... +4.02e-5**, signed |
+| `actor/kl_loss` | monotone **1e-4 -> 2.4e-3** - real drift from the reference |
+| `critic/advantages/max` | **2.4749 / 1.6202 / 1.2076** - the k=1,2,3 of 8 cases exactly |
+| effective signal groups | **63.75%** overall |
+| validation accuracy | **49.5%** @10 -> **48.5%** @20 |
+| `response_length/mean` | oscillates **1192 - 2188**, no monotone trend |
+| `entropy` | **0.2255 - 0.4432**, no collapse |
+| configured-cap hits | **5 / 2560 (0.20%)** - the 8192 budget is adequate |
+| policy staleness / rollout-vs-train prob corr | **0** / **0.9994 - 0.9997** |
 
-`ppo_kl` and both clip fractions are **exactly 0** — and that is correct, not a bug. With
-`ppo_mini_batch_size == train_batch_size` and `ppo_epochs=1`, one gradient step is taken
-with the very policy that generated the rollouts, so ρ = exp(0) = 1 and nothing can leave
-the clip range. **Consequence: R1 and every ratio-based comparison must set
-`ppo_mini_batch_size < train_batch_size`, or GSPO-vs-GRPO would compare two identical
-ratios of 1.**
+**What R1 does and does not establish.** It establishes a working, non-degenerate GRPO
+control: clipping and signed KL are nonzero, within-group reward variation persists, and
+there is no entropy or length collapse. **It does not establish a generalization
+improvement** - validation moved 49.5% -> 48.5%, and no pre-training validation was run
+under this exact configuration, so there is no baseline to compare against. Three detector
+warnings and an exit-phase traceback have root causes marked **PENDING**, not guessed.
 
----
+**Two of my own metric mappings were wrong and are corrected** (INC-005): VeRL's
+`response_length/clip_ratio` compares against the *padded tensor width*
+(`metric_utils.py:460`), not the configured cap, so it was never a truncation rate; and
+`pg_clipfrac` / `pg_clipfrac_lower` are *either-sign clipping* and the *dual-clip branch*,
+not upper/lower clipping - summing them was meaningless. The affected claim in the R0 report
+carries an inline correction rather than a silent edit.
+
 
 ## Engineering Findings
 
@@ -228,6 +357,11 @@ Only facts supported by a measurement in this repository.
 | GRPO advantages are **±1.5** because `torch.std` is the unbiased (n−1) estimator — the exact term Dr.GRPO argues is a bias | R0 measured extrema match the source arithmetic | [R0 report](analysis/R0_smoke_report.md) |
 | Policy staleness is **exactly 0** and rollout↔training prob correlation **0.9996** — synchronous GRPO and correct weight sync, measured not assumed | VeRL native `trajectory_staleness`, `rollout_actor_probs_pearson_corr` | [R0 report](analysis/R0_smoke_report.md) |
 | Verifier cost is negligible (0.017 ms mean, 0% exceptions), so it can be excluded as a throughput bottleneck by inspection | 440 cases + 512 rollouts | [verifier test](analysis/verifier_unit_test.md) |
+| **Two of my own metric mappings were wrong**: `response_length/clip_ratio` compares against the padded tensor width, not the configured cap, so it was never a truncation rate; `pg_clipfrac`/`pg_clipfrac_lower` are either-sign clipping and the dual-clip branch, not upper/lower | `metric_utils.py:460`; R0's own step 1 logged clip_ratio 0.03125 with max 3509 against a 4096 cap | [INC-005](analysis/incident_log.md) |
+| GRPO advantage extrema are a **free readout of group composition** — no extra instrumentation needed | R1 (G=8) logged exactly 2.4749 / 1.6202 / 1.2076, matching k=1,2,3 correct-of-8 under the unbiased (n−1) std | [grpo notes](docs/algorithms/grpo.md) |
+| `mini < train` makes clipping nonzero but **not yet informative**: at lr 1e-6 only ~0.015% of tokens clip, so ρ≈1 — a GSPO ratio comparison would still be near-vacuous | R1 `pg_clipfrac` 5.07e-5–2.61e-4 across all 20 updates | [gspo notes](docs/algorithms/gspo.md) |
+| Vanilla GRPO showed **no runaway response-length growth** over 20 updates at lr 1e-6 — a null result that constrains when the Dr.GRPO bias can even be observed | R1 `response_length/mean` oscillated 1192–2188 with no monotone trend | [dr.grpo notes](docs/algorithms/dr_grpo.md) |
+| The 8192-token budget **resolved the truncation contamination**: 5 of 2560 rollouts hit the cap | R1 configured-cap hits 0.20%, versus 87.11% at think@4096 | [R1 report](analysis/R1_baseline_report.md) |
 | Four infrastructure faults presented as something they were not | INC-001 split-routed proxy · INC-002 git subprocess proxy · INC-003 `uv --frozen` ignores `UV_DEFAULT_INDEX` (0.1 → 46.6 MB/s, ~460×) · INC-004 a `TypeError` disguised as a vLLM engine crash | [incident log](analysis/incident_log.md) |
 
 ---
@@ -269,7 +403,8 @@ config, hardware snapshot, environment lock, checkpoint ids, and restart boundar
 ```
 docs/
   algorithm_matrix.md       the five-algorithm comparison design
-  algorithms/               per-algorithm research notes
+  algorithms/               grpo · dr_grpo · dapo · gspo · vapo — formulas,
+                            source citations, measured evidence
   experiment_plan.md        stage gates, run definitions, checkpoint policy
   rl_pipeline_notes.md      official Qwen3-8B GRPO config, read from source
   debugging_playbook.md     reward-is-not-ground-truth checklist
