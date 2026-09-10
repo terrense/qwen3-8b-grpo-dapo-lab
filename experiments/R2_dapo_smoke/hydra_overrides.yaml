@@ -60,6 +60,6 @@
 - trainer.resume_mode=disable
 - trainer.total_epochs=1
 - trainer.total_training_steps=2
-- trainer.rollout_data_dir=/root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-170443/rollout_dump
+- trainer.rollout_data_dir=/root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-171600/rollout_dump
 - ray_kwargs.ray_init.runtime_env.py_executable=uv -v run --frozen --all-packages
   --extra vllm --extra fsdp
