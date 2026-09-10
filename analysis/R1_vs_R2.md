@@ -1,5 +1,8 @@
 # R1 (vanilla GRPO) vs R2 (DAPO)
 
+> 2026-09-10 事后审计更正：本文是两步 smoke 的历史解读。第 3 节及“下一步必须先解决的问题”中由 signed ppo_kl 推出 rho 恒近 1、GSPO 白跑及必须重跑 R1/R2 的推断不成立；以 [ratio 探测报告](ratio_probe_report.md) 为准。R1 native timing_s/ref 前两步实际为 29.818 / 8.265 秒，下面 21.1 / 2.7 秒及衍生说明不准确。两批生成不能直接推出两倍 token；两个 step 也不能证明筛选率是稳定属性。timing_s/reward 单个阶段不足以断言 verifier 端到端开销永远可忽略。以下保留历史文本，不能作为新增 GPU 预算或性能结论依据。
+
+
 **先把话说清楚：这不是一个公平的性能对比，别拿这里的 reward 数字说事。**
 
 R1 是 20 个 update 的正式 baseline，R2 目前只是 2 个 update 的 smoke test。而且 DAPO 的

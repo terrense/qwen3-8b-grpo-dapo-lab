@@ -1,0 +1,507 @@
+{
+  "R1_first3": {
+    "metrics": {
+      "actor/pg_clipfrac": [
+        5.21367394412664e-05,
+        0.0001525029347249074,
+        7.762995824123209e-05
+      ],
+      "actor/ppo_kl": [
+        -2.1806300026128156e-05,
+        -4.3988706153186286e-05,
+        -5.4435910016081834e-05
+      ],
+      "actor/grad_norm": [
+        0.2714477740228176,
+        0.31294793635606766,
+        0.2821488231420517
+      ],
+      "actor/entropy": [
+        0.358451783657074,
+        0.33242371678352356,
+        0.4432307183742523
+      ],
+      "actor/kl_loss": [
+        0.00014313595420389902,
+        0.0003211479815945495,
+        0.00038053503521950915
+      ],
+      "critic/rewards/mean": [
+        -0.5,
+        -0.15625,
+        -0.421875
+      ],
+      "response_length/mean": [
+        1683.84375,
+        1643.75,
+        1694.984375
+      ],
+      "response_length/max": [
+        7068.0,
+        5426.0,
+        6347.0
+      ],
+      "timing_s/step": [
+        126.88527072221041,
+        85.72197719663382,
+        93.57157138362527
+      ],
+      "timing_s/gen": [
+        42.36567771807313,
+        34.35747076570988,
+        40.37565891817212
+      ],
+      "timing_s/update_actor": [
+        31.530040334910154,
+        30.350503601133823,
+        31.6049189157784
+      ],
+      "timing_s/old_log_prob": [
+        10.083854127675295,
+        8.385781209915876,
+        8.720085822045803
+      ],
+      "timing_s/ref": [
+        29.818369548767805,
+        8.264971174299717,
+        8.524453967809677
+      ],
+      "timing_s/update_weights": [
+        4.209004636853933,
+        4.213425610214472,
+        4.197781130671501
+      ]
+    },
+    "prompt_sets_match_R1_by_step": [
+      true,
+      true,
+      true
+    ],
+    "output_tokens": 642890,
+    "nonfinite": [],
+    "staleness_max": 0
+  },
+  "mini4_lr1e6": {
+    "metrics": {
+      "actor/pg_clipfrac": [
+        0.00022155506167109706,
+        0.00037887710004724795,
+        0.0002356165416586009
+      ],
+      "actor/ppo_kl": [
+        -5.48816592527146e-06,
+        3.7326864116948855e-05,
+        -2.3212204041556106e-05
+      ],
+      "actor/grad_norm": [
+        0.41766825318336487,
+        0.4248730316758156,
+        0.3854551501572132
+      ],
+      "actor/entropy": [
+        0.3547678589820862,
+        0.3315149247646332,
+        0.432689368724823
+      ],
+      "actor/kl_loss": [
+        0.00022851918402011506,
+        0.0003500887996779056,
+        0.0005331738229870098
+      ],
+      "critic/rewards/mean": [
+        -0.328125,
+        -0.265625,
+        -0.40625
+      ],
+      "response_length/mean": [
+        1620.609375,
+        1795.7109375,
+        1845.15625
+      ],
+      "response_length/max": [
+        5690.0,
+        5581.0,
+        7574.0
+      ],
+      "timing_s/step": [
+        119.34498140960932,
+        92.58948399499059,
+        105.76420387253165
+      ],
+      "timing_s/gen": [
+        38.356938585639,
+        36.350374817848206,
+        46.369828414171934
+      ],
+      "timing_s/update_actor": [
+        31.183301098644733,
+        33.55861746147275,
+        35.73974786326289
+      ],
+      "timing_s/old_log_prob": [
+        9.079508800059557,
+        9.055607739835978,
+        9.55598620325327
+      ],
+      "timing_s/ref": [
+        27.670668315142393,
+        8.842260409146547,
+        9.378397807478905
+      ],
+      "timing_s/update_weights": [
+        4.356943886727095,
+        4.651414584368467,
+        4.556169018149376
+      ]
+    },
+    "prompt_sets_match_R1_by_step": [
+      true,
+      true,
+      true
+    ],
+    "output_tokens": 673469,
+    "nonfinite": [],
+    "staleness_max": 0,
+    "overrides": {
+      "algorithm.adv_estimator": "grpo",
+      "algorithm.use_kl_in_reward": "False",
+      "algorithm.norm_adv_by_std_in_grpo": "True",
+      "algorithm.filter_groups.enable": "False",
+      "data.train_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/train.parquet']",
+      "data.val_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/val.parquet']",
+      "data.train_batch_size": "16",
+      "data.max_prompt_length": "2048",
+      "data.max_response_length": "8192",
+      "data.filter_overlong_prompts": "True",
+      "data.truncation": "error",
+      "data.apply_chat_template_kwargs.enable_thinking": "False",
+      "actor_rollout_ref.model.path": "/root/autodl-tmp/rl_lab/models/Qwen3-8B",
+      "actor_rollout_ref.model.use_remove_padding": "True",
+      "actor_rollout_ref.model.enable_gradient_checkpointing": "True",
+      "actor_rollout_ref.actor.optim.lr": "1e-6",
+      "actor_rollout_ref.actor.ppo_mini_batch_size": "4",
+      "actor_rollout_ref.actor.ppo_epochs": "1",
+      "actor_rollout_ref.actor.clip_ratio_low": "0.2",
+      "actor_rollout_ref.actor.clip_ratio_high": "0.2",
+      "actor_rollout_ref.actor.loss_agg_mode": "token-mean",
+      "actor_rollout_ref.actor.use_dynamic_bsz": "True",
+      "actor_rollout_ref.actor.ppo_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.actor.use_kl_loss": "True",
+      "actor_rollout_ref.actor.kl_loss_coef": "0.001",
+      "actor_rollout_ref.actor.kl_loss_type": "low_var_kl",
+      "actor_rollout_ref.actor.entropy_coeff": "0",
+      "actor_rollout_ref.actor.fsdp_config.param_offload": "False",
+      "actor_rollout_ref.actor.fsdp_config.optimizer_offload": "False",
+      "actor_rollout_ref.rollout.name": "vllm",
+      "actor_rollout_ref.rollout.tensor_model_parallel_size": "2",
+      "actor_rollout_ref.rollout.gpu_memory_utilization": "0.6",
+      "actor_rollout_ref.rollout.n": "8",
+      "actor_rollout_ref.rollout.temperature": "1.0",
+      "actor_rollout_ref.rollout.top_p": "1.0",
+      "actor_rollout_ref.rollout.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.ref.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.fsdp_config.param_offload": "True",
+      "trainer.balance_batch": "True",
+      "trainer.logger": "[\"console\",\"file\"]",
+      "trainer.project_name": "qwen3_8b_grpo_dapo_lab",
+      "trainer.experiment_name": "probe_mini4_lr1e6",
+      "trainer.n_gpus_per_node": "4",
+      "trainer.nnodes": "1",
+      "trainer.save_freq": "-1",
+      "trainer.test_freq": "-1",
+      "trainer.val_before_train": "False",
+      "trainer.resume_mode": "disable",
+      "trainer.total_epochs": "1",
+      "trainer.total_training_steps": "3",
+      "trainer.rollout_data_dir": "/root/autodl-tmp/rl_lab/logs/probe_mini4_lr1e6_dump",
+      "ray_kwargs.ray_init.runtime_env.py_executable": "uv -v run --frozen --all-packages --extra vllm --extra fsdp"
+    },
+    "metrics_sha256": "8a641ef564b4a9ace0d13b5ed8432c4a87139380b7b4917ecce3dee99433a5be",
+    "teardown_traceback": true,
+    "log_mtime_iso": "2026-09-10T19:06:13.761462"
+  },
+  "mini2_lr1e6": {
+    "metrics": {
+      "actor/pg_clipfrac": [
+        0.000490248361529666,
+        0.0005008437813103228,
+        0.00022198356919034268
+      ],
+      "actor/ppo_kl": [
+        7.29226026123797e-05,
+        1.6636138269632283e-05,
+        -6.47132112305826e-05
+      ],
+      "actor/grad_norm": [
+        0.565083076690371,
+        0.5432508867233992,
+        0.4060033801943064
+      ],
+      "actor/entropy": [
+        0.3750491440296173,
+        0.343222051858902,
+        0.4289224445819855
+      ],
+      "actor/kl_loss": [
+        0.00030175113988661906,
+        0.00046948311137384735,
+        0.0008987315686681541
+      ],
+      "critic/rewards/mean": [
+        -0.453125,
+        -0.21875,
+        -0.375
+      ],
+      "response_length/mean": [
+        1600.9765625,
+        1743.2890625,
+        1744.75
+      ],
+      "response_length/max": [
+        5385.0,
+        5465.0,
+        4856.0
+      ],
+      "timing_s/step": [
+        114.51249807700515,
+        93.02837086468935,
+        91.45451320335269
+      ],
+      "timing_s/gen": [
+        34.354224763810635,
+        36.36729122698307,
+        34.358286794275045
+      ],
+      "timing_s/update_actor": [
+        32.812686283141375,
+        34.71479073911905,
+        35.01451075449586
+      ],
+      "timing_s/old_log_prob": [
+        8.940336171537638,
+        8.811781033873558,
+        8.900951907038689
+      ],
+      "timing_s/ref": [
+        25.361542146652937,
+        8.638739354908466,
+        8.730140008032322
+      ],
+      "timing_s/update_weights": [
+        4.182369995862246,
+        4.348902121186256,
+        4.314073842018843
+      ]
+    },
+    "prompt_sets_match_R1_by_step": [
+      true,
+      true,
+      true
+    ],
+    "output_tokens": 651394,
+    "nonfinite": [],
+    "staleness_max": 0,
+    "overrides": {
+      "algorithm.adv_estimator": "grpo",
+      "algorithm.use_kl_in_reward": "False",
+      "algorithm.norm_adv_by_std_in_grpo": "True",
+      "algorithm.filter_groups.enable": "False",
+      "data.train_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/train.parquet']",
+      "data.val_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/val.parquet']",
+      "data.train_batch_size": "16",
+      "data.max_prompt_length": "2048",
+      "data.max_response_length": "8192",
+      "data.filter_overlong_prompts": "True",
+      "data.truncation": "error",
+      "data.apply_chat_template_kwargs.enable_thinking": "False",
+      "actor_rollout_ref.model.path": "/root/autodl-tmp/rl_lab/models/Qwen3-8B",
+      "actor_rollout_ref.model.use_remove_padding": "True",
+      "actor_rollout_ref.model.enable_gradient_checkpointing": "True",
+      "actor_rollout_ref.actor.optim.lr": "1e-6",
+      "actor_rollout_ref.actor.ppo_mini_batch_size": "2",
+      "actor_rollout_ref.actor.ppo_epochs": "1",
+      "actor_rollout_ref.actor.clip_ratio_low": "0.2",
+      "actor_rollout_ref.actor.clip_ratio_high": "0.2",
+      "actor_rollout_ref.actor.loss_agg_mode": "token-mean",
+      "actor_rollout_ref.actor.use_dynamic_bsz": "True",
+      "actor_rollout_ref.actor.ppo_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.actor.use_kl_loss": "True",
+      "actor_rollout_ref.actor.kl_loss_coef": "0.001",
+      "actor_rollout_ref.actor.kl_loss_type": "low_var_kl",
+      "actor_rollout_ref.actor.entropy_coeff": "0",
+      "actor_rollout_ref.actor.fsdp_config.param_offload": "False",
+      "actor_rollout_ref.actor.fsdp_config.optimizer_offload": "False",
+      "actor_rollout_ref.rollout.name": "vllm",
+      "actor_rollout_ref.rollout.tensor_model_parallel_size": "2",
+      "actor_rollout_ref.rollout.gpu_memory_utilization": "0.6",
+      "actor_rollout_ref.rollout.n": "8",
+      "actor_rollout_ref.rollout.temperature": "1.0",
+      "actor_rollout_ref.rollout.top_p": "1.0",
+      "actor_rollout_ref.rollout.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.ref.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.fsdp_config.param_offload": "True",
+      "trainer.balance_batch": "True",
+      "trainer.logger": "[\"console\",\"file\"]",
+      "trainer.project_name": "qwen3_8b_grpo_dapo_lab",
+      "trainer.experiment_name": "probe_mini2_lr1e6",
+      "trainer.n_gpus_per_node": "4",
+      "trainer.nnodes": "1",
+      "trainer.save_freq": "-1",
+      "trainer.test_freq": "-1",
+      "trainer.val_before_train": "False",
+      "trainer.resume_mode": "disable",
+      "trainer.total_epochs": "1",
+      "trainer.total_training_steps": "3",
+      "trainer.rollout_data_dir": "/root/autodl-tmp/rl_lab/logs/probe_mini2_lr1e6_dump",
+      "ray_kwargs.ray_init.runtime_env.py_executable": "uv -v run --frozen --all-packages --extra vllm --extra fsdp"
+    },
+    "metrics_sha256": "30c0eefbd4e66664370eeb5f02eb0219aa1c97acab8d7284dc2fffe5ca8456e9",
+    "teardown_traceback": true,
+    "log_mtime_iso": "2026-09-10T19:13:41.710405"
+  },
+  "mini8_lr5e6": {
+    "metrics": {
+      "actor/pg_clipfrac": [
+        0.00027345464059180813,
+        0.0003062875366595108,
+        0.00043135122086823685
+      ],
+      "actor/ppo_kl": [
+        7.79243596298329e-05,
+        0.0001269718868570635,
+        0.00015525895855716954
+      ],
+      "actor/grad_norm": [
+        0.2702021151781082,
+        0.25450698286294937,
+        0.19930186122655869
+      ],
+      "actor/entropy": [
+        0.36944013833999634,
+        0.35396823287010193,
+        0.42622870206832886
+      ],
+      "actor/kl_loss": [
+        0.0002652626317285467,
+        0.001443259938241681,
+        0.003907921651261859
+      ],
+      "critic/rewards/mean": [
+        -0.265625,
+        -0.09375,
+        -0.265625
+      ],
+      "response_length/mean": [
+        1575.8671875,
+        1788.71875,
+        1725.7890625
+      ],
+      "response_length/max": [
+        6471.0,
+        5253.0,
+        4832.0
+      ],
+      "timing_s/step": [
+        115.92023201286793,
+        89.02737272903323,
+        85.88527772203088
+      ],
+      "timing_s/gen": [
+        38.37676842883229,
+        34.349394492805004,
+        32.354753978550434
+      ],
+      "timing_s/update_actor": [
+        29.573275048285723,
+        32.75408162921667,
+        31.95658014342189
+      ],
+      "timing_s/old_log_prob": [
+        8.855251602828503,
+        8.928007811307907,
+        8.761314671486616
+      ],
+      "timing_s/ref": [
+        26.302063677459955,
+        8.761945992708206,
+        8.591254964470863
+      ],
+      "timing_s/update_weights": [
+        3.9456383511424065,
+        4.102874282747507,
+        4.0849122777581215
+      ]
+    },
+    "prompt_sets_match_R1_by_step": [
+      true,
+      true,
+      true
+    ],
+    "output_tokens": 651568,
+    "nonfinite": [],
+    "staleness_max": 0,
+    "overrides": {
+      "algorithm.adv_estimator": "grpo",
+      "algorithm.use_kl_in_reward": "False",
+      "algorithm.norm_adv_by_std_in_grpo": "True",
+      "algorithm.filter_groups.enable": "False",
+      "data.train_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/train.parquet']",
+      "data.val_files": "['/root/autodl-tmp/rl_lab/data/dapo_math_17k/val.parquet']",
+      "data.train_batch_size": "16",
+      "data.max_prompt_length": "2048",
+      "data.max_response_length": "8192",
+      "data.filter_overlong_prompts": "True",
+      "data.truncation": "error",
+      "data.apply_chat_template_kwargs.enable_thinking": "False",
+      "actor_rollout_ref.model.path": "/root/autodl-tmp/rl_lab/models/Qwen3-8B",
+      "actor_rollout_ref.model.use_remove_padding": "True",
+      "actor_rollout_ref.model.enable_gradient_checkpointing": "True",
+      "actor_rollout_ref.actor.optim.lr": "5e-6",
+      "actor_rollout_ref.actor.ppo_mini_batch_size": "8",
+      "actor_rollout_ref.actor.ppo_epochs": "1",
+      "actor_rollout_ref.actor.clip_ratio_low": "0.2",
+      "actor_rollout_ref.actor.clip_ratio_high": "0.2",
+      "actor_rollout_ref.actor.loss_agg_mode": "token-mean",
+      "actor_rollout_ref.actor.use_dynamic_bsz": "True",
+      "actor_rollout_ref.actor.ppo_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.actor.use_kl_loss": "True",
+      "actor_rollout_ref.actor.kl_loss_coef": "0.001",
+      "actor_rollout_ref.actor.kl_loss_type": "low_var_kl",
+      "actor_rollout_ref.actor.entropy_coeff": "0",
+      "actor_rollout_ref.actor.fsdp_config.param_offload": "False",
+      "actor_rollout_ref.actor.fsdp_config.optimizer_offload": "False",
+      "actor_rollout_ref.rollout.name": "vllm",
+      "actor_rollout_ref.rollout.tensor_model_parallel_size": "2",
+      "actor_rollout_ref.rollout.gpu_memory_utilization": "0.6",
+      "actor_rollout_ref.rollout.n": "8",
+      "actor_rollout_ref.rollout.temperature": "1.0",
+      "actor_rollout_ref.rollout.top_p": "1.0",
+      "actor_rollout_ref.rollout.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.log_prob_use_dynamic_bsz": "True",
+      "actor_rollout_ref.ref.log_prob_max_token_len_per_gpu": "32768",
+      "actor_rollout_ref.ref.fsdp_config.param_offload": "True",
+      "trainer.balance_batch": "True",
+      "trainer.logger": "[\"console\",\"file\"]",
+      "trainer.project_name": "qwen3_8b_grpo_dapo_lab",
+      "trainer.experiment_name": "probe_mini8_lr5e6",
+      "trainer.n_gpus_per_node": "4",
+      "trainer.nnodes": "1",
+      "trainer.save_freq": "-1",
+      "trainer.test_freq": "-1",
+      "trainer.val_before_train": "False",
+      "trainer.resume_mode": "disable",
+      "trainer.total_epochs": "1",
+      "trainer.total_training_steps": "3",
+      "trainer.rollout_data_dir": "/root/autodl-tmp/rl_lab/logs/probe_mini8_lr5e6_dump",
+      "ray_kwargs.ray_init.runtime_env.py_executable": "uv -v run --frozen --all-packages --extra vllm --extra fsdp"
+    },
+    "metrics_sha256": "1dd05e5e522b8196904aa357aa5c03ff6876be645140c7e3737a3118db954b9f",
+    "teardown_traceback": true,
+    "log_mtime_iso": "2026-09-10T19:21:11.819332"
+  }
+}

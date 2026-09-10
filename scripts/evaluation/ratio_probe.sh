@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# AUDIT 2026-09-10: historical probe; see analysis/ratio_probe_report.md.
+# Signed ppo_kl does not determine the ratio distribution. The statements below
+# and the hard-coded R1 summary are historical, superseded by the audited report.
+# This script bypasses the flight recorder and truncates its summary on rerun.
+# Do not rerun before adapting it to the authorized recorder workflow.
 # Ratio sensitivity probe -- 找一个能让 rho 真正离开 1 的配置。
 #
 # 为什么需要这个：R1 和 R2 的 pg_clipfrac 都只有 ~1e-4，ppo_kl ~1e-5。
