@@ -56,7 +56,7 @@ more slowly than the GRPO control.
 Keep only groups that are *not* unanimous:
 
 $$
-0<\Big|\{\,i:\ r_i=1\,\}\Big|<G
+0\lt \Big|\{\,i:\ r_i=1\,\}\Big|\lt G
 $$
 
 Unanimous groups have $\mathrm{std}(\mathbf r)=0$, hence $\hat A_i\equiv 0$ and **zero

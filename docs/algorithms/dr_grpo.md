@@ -69,7 +69,7 @@ $$
 
 ### Why this inflates wrong answers
 
-Consider a wrong response ($\hat A<0$). Its total penalty under `token-mean` is
+Consider a wrong response ($\hat A\lt 0$). Its total penalty under `token-mean` is
 
 $$
 \frac{1}{\lvert y_i\rvert}\sum_{t}\ell_{i,t}\ \propto\ \frac{\lvert y_i\rvert\cdot\bar\ell}{\lvert y_i\rvert}=\bar\ell

@@ -20,7 +20,7 @@ sequence length.
 GSPO moves the ratio — and therefore the clipping decision — to the sequence.
 
 $$
-\underbrace{\rho_{i,t}=\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}}_{\text{GRPO: per token}}
+\underbrace{\rho_{i,t}=\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,\lt t})}}_{\text{GRPO: per token}}
 \qquad\Longrightarrow\qquad
 \underbrace{s_i(\theta)=\left(\frac{\pi_\theta(y_i\mid x)}{\pi_{\theta_{\text{old}}}(y_i\mid x)}\right)^{1/\lvert y_i\rvert}}_{\text{GSPO: per sequence}}
 $$
@@ -29,7 +29,7 @@ The exponent $1/\lvert y_i\rvert$ makes $s_i$ the **geometric mean** of the toke
 is length-normalised and comparable across responses of very different length:
 
 $$
-s_i(\theta)=\exp\!\left(\frac{1}{\lvert y_i\rvert}\sum_{t=1}^{\lvert y_i\rvert}\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}\right)
+s_i(\theta)=\exp\!\left(\frac{1}{\lvert y_i\rvert}\sum_{t=1}^{\lvert y_i\rvert}\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,\lt t})}\right)
 $$
 
 Objective:
@@ -75,7 +75,7 @@ seq_importance_ratio = torch.exp(log_seq_importance_ratio)
 which is
 
 $$
-s_{i,t}(\theta)=\mathrm{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\mathrm{sg}\big[\pi_\theta(y_{i,t}\mid x,y_{i,<t})\big]}
+s_{i,t}(\theta)=\mathrm{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\mathrm{sg}\big[\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})\big]}
 $$
 
 In the forward pass the two $\pi_\theta$ terms cancel, so the **value** is exactly $s_i$ — the

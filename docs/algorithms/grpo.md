@@ -19,7 +19,7 @@ $$
 with the **token-level** importance ratio
 
 $$
-\rho_{i,t}(\theta)=\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}
+\rho_{i,t}(\theta)=\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,\lt t})}
 $$
 
 and the **group-normalised outcome advantage**, identical for every token of a response:

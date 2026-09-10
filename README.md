@@ -216,7 +216,7 @@ $$
 \min\Big(\rho\hat A,\ \mathrm{clip}\big(\rho,1-\epsilon_{\text{low}},1+\epsilon_{\text{high}}\big)\hat A\Big),\qquad \epsilon_{\text{low}}=0.2,\ \epsilon_{\text{high}}=0.28
 $$
 
-Dynamic sampling keeps only groups that actually carry signal, $0<\lvert\{i:r_i=1\}\rvert<G$,
+Dynamic sampling keeps only groups that actually carry signal, $0\lt \lvert\{i:r_i=1\}\rvert\lt G$,
 and regenerates the rest. Token-level aggregation divides by the batch token total
 $\sum_i\lvert y_i\rvert$. Overlong shaping replaces the truncation cliff with a linear ramp
 (verbatim from `reward_manager/dapo.py:126`):
@@ -231,7 +231,7 @@ Moves the ratio, and therefore the **clipping decision**, from token to sequence
 length-normalised geometric mean of token ratios:
 
 $$
-s_i(\theta)=\left(\frac{\pi_\theta(y_i\mid x)}{\pi_{\theta_{\text{old}}}(y_i\mid x)}\right)^{1/\lvert y_i\rvert}=\exp\!\left(\frac{1}{\lvert y_i\rvert}\sum_{t=1}^{\lvert y_i\rvert}\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}\right)
+s_i(\theta)=\left(\frac{\pi_\theta(y_i\mid x)}{\pi_{\theta_{\text{old}}}(y_i\mid x)}\right)^{1/\lvert y_i\rvert}=\exp\!\left(\frac{1}{\lvert y_i\rvert}\sum_{t=1}^{\lvert y_i\rvert}\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,\lt t})}\right)
 $$
 
 verl implements it natively (`core_algos.py:1546`) with a stop-gradient identity, so the
