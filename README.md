@@ -299,13 +299,13 @@ Definitions and the real VeRL key behind each metric:
 | R2 — DAPO | **NOT RUN** |
 | R3 — Failure injection | **NOT RUN** |
 
-**Live run** `R1_grpo_baseline` · step **20** ·
-health **REVIEW** · reward 0.2656 ·
-KL 0.00004 · entropy 0.3384 ·
-effective signal 0.56 ·
-incidents 3
+**Live run** `R2_dapo_smoke` · step **None** ·
+health **GREEN** · reward — ·
+KL — · entropy — ·
+effective signal — ·
+incidents 0
 
-_Auto-updated 2026-09-10T14:59:12 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+_Auto-updated 2026-09-10T17:01:21 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

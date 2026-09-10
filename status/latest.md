@@ -1,8 +1,47 @@
-# Final Run Status
+# Live Run Status
 
-**R1_grpo_baseline — COMPLETED, 20/20 updates, launcher exit 0.**
-Completed 2026-09-10 14:21:57 Asia/Shanghai. No training process remains; GPU memory released at audit.
-Three detector warnings plus an exit-cleanup traceback are reviewed in [R1 analysis](../analysis/R1_baseline_report.md).
-Root causes remain PENDING. Exact truncation is unavailable; configured-cap hits total 5/2560.
-Validation: update 10 = 49.5%, update 20 = 48.5%. R2 and later algorithms: NOT RUN.
-**Stopped, awaiting user direction.**
+_Updated 2026-09-10T17:01:21 · health **GREEN**_
+
+| | |
+|---|---|
+| Run | `R2_dapo_smoke` (`R2_dapo_smoke-20260910-170116`) |
+| Algorithm | DAPO |
+| Model | Qwen/Qwen3-8B |
+| Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
+| Current optimizer step | **None** |
+| Updates recorded | 0 |
+| Elapsed | 5 s |
+| Health | **GREEN** |
+
+## Latest update
+
+| metric | value |
+|---|---|
+| reward_mean | unavailable |
+| KL | unavailable |
+| entropy | unavailable |
+| clip_fraction | unavailable |
+| grad_norm | unavailable |
+| mixed_group_ratio | unavailable |
+| zero_std_group_ratio | unavailable |
+| effective_signal_fraction | unavailable |
+| response_length_mean | unavailable |
+| truncation_rate | unavailable |
+| rollout time (s) | unavailable |
+| actor update time (s) | unavailable |
+
+## System
+
+GPU util: `[0, 0, 0, 0]`
+GPU mem (GiB): `[0.503, 0.503, 0.503, 0.503]`
+disk / : 1.27%   disk data: 3.06%
+
+## Incidents
+
+0 recorded. Latest: `none`
+
+Last checkpoint: `none`
+Git commit: `cdf3242`
+
+_Values shown as `unavailable` are metrics the current VeRL build does not emit.
+They are never substituted with 0._
