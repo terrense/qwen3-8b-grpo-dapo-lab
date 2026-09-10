@@ -51,8 +51,13 @@ export ROLLOUT_DUMP_DIR="$DUMP_DIR"
 VERL_SHA=$(git -C "$LAB/repos/verl" rev-parse HEAD 2>/dev/null || echo unknown)
 LAB_SHA=$(git -C "$LAB" rev-parse HEAD 2>/dev/null || echo unknown)
 MODEL_PATH=${MODEL_PATH:-$LAB/models/Qwen3-8B}
-DATA_PARQUET=${DATA_PARQUET:-$LAB/data/raw/DAPO-Math-17k/data/dapo-math-17k.parquet}
+# INC-005: this used to default to data/raw/, which is NOT what any run trains on --
+# every launcher uses the DEDUPLICATED splits (the raw file repeats each prompt 100x).
+# Recording the raw hash made the manifest describe a file the run never touched.
+DATA_PARQUET=${DATA_PARQUET:-$LAB/data/dapo_math_17k/train.parquet}
 DATA_SHA=$( [ -f "$DATA_PARQUET" ] && sha256sum "$DATA_PARQUET" | cut -c1-16 || echo unknown )
+DATA_VAL=${DATA_VAL:-$LAB/data/dapo_math_17k/val.parquet}
+DATA_VAL_SHA=$( [ -f "$DATA_VAL" ] && sha256sum "$DATA_VAL" | cut -c1-16 || echo unknown )
 MODEL_CFG_SHA=$( [ -f "$MODEL_PATH/config.json" ] && sha256sum "$MODEL_PATH/config.json" | cut -c1-16 || echo unknown )
 
 printf '%q ' "${TRAIN_CMD[@]}" > "$RUN_DIR/command.txt"; echo >> "$RUN_DIR/command.txt"
@@ -78,7 +83,10 @@ cat > "$RUN_DIR/run_manifest.json" <<EOF
   "model_path": "$MODEL_PATH",
   "model_config_sha256_16": "$MODEL_CFG_SHA",
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
-  "dataset_parquet_sha256_16": "$DATA_SHA",
+  "dataset_train_parquet": "$DATA_PARQUET",
+  "dataset_train_sha256_16": "$DATA_SHA",
+  "dataset_val_parquet": "$DATA_VAL",
+  "dataset_val_sha256_16": "$DATA_VAL_SHA",
   "verl_commit": "$VERL_SHA",
   "lab_commit": "$LAB_SHA",
   "seed": ${SEED:-20260910},
@@ -111,9 +119,25 @@ export VERL_FILE_LOGGER_PATH="$VERL_JSONL"
 export VERL_FILE_LOGGER_ROOT="$RUN_DIR/metrics"
 
 OBSERVER_PID=""
+# INC-005: resolved_config.yaml used to stay a NOT RUN placeholder forever -- it was
+# referenced by the report and every incident bundle but never written. Hydra does emit
+# the composed config plus the override list; copy them out of the run it just created.
+capture_resolved_config() {
+    local hd
+    hd=$(find "$LAB/repos/verl/outputs" -type d -name ".hydra" -newer "$RUN_DIR/command.txt"             2>/dev/null | sort | tail -1)
+    if [ -n "$hd" ] && [ -f "$hd/config.yaml" ]; then
+        cp "$hd/config.yaml"    "$RUN_DIR/resolved_config.yaml"
+        [ -f "$hd/overrides.yaml" ] && cp "$hd/overrides.yaml" "$RUN_DIR/hydra_overrides.yaml"
+        echo "[launcher] resolved config captured from $hd"
+    else
+        echo "[launcher] WARNING: no hydra config found; resolved_config.yaml left as-is" >&2
+    fi
+}
+
 cleanup() {
     local code=$1
     echo "[launcher] cleanup (exit=$code)"
+    capture_resolved_config
     [ -n "$OBSERVER_PID" ] && kill "$OBSERVER_PID" 2>/dev/null || true
     kill "$SAMPLER_PID" 2>/dev/null || true
     sleep 2

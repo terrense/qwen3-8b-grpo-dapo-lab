@@ -6,6 +6,23 @@ VeRL `1252cc71` · lab commit `78b21d8` · seed `20260910`
 Launched through `scripts/training/run_with_observer.sh` — the first real GRPO update in
 this project was already under the flight recorder.
 
+> ### Correction (added after R1)
+>
+> This report originally read `response_length/clip_ratio` as the **truncation rate**.
+> **That mapping was wrong.** `metric_utils.py:460` binds
+> `max_response_length = batch.batch["responses"].shape[-1]` — the **padded tensor width**,
+> not `data.max_response_length`. The metric therefore counts responses equal to the
+> *batch's own longest padded width*, which is near-trivially nonzero.
+>
+> This report's own numbers prove it: update 1 shows `clip_ratio = 0.03125` while
+> `response_length/max` was **3509** against a **4096** cap — nothing had actually reached
+> the cap. The column is renamed `response_width_hit_fraction`; a true truncation rate is
+> **NOT EMITTED** by the trainer-side metrics (finish reasons are unavailable there).
+>
+> What this invalidates: the claim that "truncation rose 3.13% → 9.38%". What it does **not**
+> touch: the 87.11% truncation measured in the pre-RL rollout, which came from vLLM's own
+> `finish_reason == "length"` in our own script — the correct signal. See INC-005.
+
 ## Configuration
 
 `train_batch_size=8` · `rollout.n=4` (G) · `ppo_mini_batch_size=8` · `ppo_epochs=1` ·
@@ -32,7 +49,7 @@ this project was already under the flight recorder.
 | `critic/advantages/min` / `max` | **−1.5 / +1.5** | −1.5 / +1.5 |
 | `response_length/mean` | 1532.2 | 2040.7 |
 | `response_length/max` | 3509 | 4096 |
-| `truncation_rate` (`response_length/clip_ratio`) | 3.13% | 9.38% |
+| `response_width_hit_fraction` (`response_length/clip_ratio`) | 3.13% | 9.38% |
 | `perf/total_num_tokens` | 53,599 | 69,975 |
 | `perf/throughput` | 206.8 tok/s | 418.1 tok/s |
 | `perf/mfu/actor` | 0.567 | 0.648 |
@@ -171,8 +188,9 @@ before it starts:
 1. **`ppo_mini_batch_size < train_batch_size`** (or `ppo_epochs > 1`). Otherwise ρ ≡ 1 and
    clipping/KL are structurally zero — which would also invalidate the GSPO and DAPO
    clip-behaviour comparisons.
-2. **A final length budget.** R0 used non-thinking @ 4096. Truncation rose 3.13% → 9.38%
-   and `response_length/mean` went 1532 → 2041 across just two updates. Response-length
-   growth under GRPO is itself a first-class research question here — it is the phenomenon
-   Dr.GRPO attributes partly to optimization bias — so it must be measured, not merely
-   capped away.
+2. **A final length budget.** R0 used non-thinking @ 4096, with `response_length/mean`
+   rising 1532 → 2041 across two updates. (The accompanying "truncation" figures were a
+   misread metric — see the correction above.) Response-length growth under GRPO is itself a
+   first-class research question here — it is the phenomenon Dr.GRPO attributes partly to
+   optimization bias — so it must be measured, not merely capped away. A genuine truncation
+   rate needs `finish_reason`, which the trainer-side metrics do not expose.

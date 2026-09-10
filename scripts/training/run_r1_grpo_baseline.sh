@@ -19,10 +19,14 @@
 #       think@4096    87.11% truncation, 79.69% zero-std, acc 12.70%  <- unusable
 #       think@16384   18.75% truncation, acc 56.25%, 8820 tok/sample  <- 11x cost
 #       nothink@4096   1.56% truncation, acc 31.25%, 1477 tok/sample  <- best signal/token
-#     R0 used nothink@4096 and truncation still climbed 3.13% -> 9.38% in two
-#     updates as responses lengthened (1532 -> 2041 tokens). Over 20 updates that
-#     would contaminate reward with length, so the cap is doubled to 8192 to buy
-#     headroom while keeping the cheap non-thinking regime.
+#     R0 used nothink@4096 and response length rose 1532 -> 2041 tokens in two
+#     updates, so the cap is doubled to 8192 to buy headroom while keeping the
+#     cheap non-thinking regime.
+#     NOTE (corrected after R1): the original justification here also cited
+#     "truncation 3.13% -> 9.38%", which was a MISREAD of
+#     response_length/clip_ratio -- that metric compares against the padded
+#     tensor width, not the configured cap (INC-005). The length-growth argument
+#     stands on response_length/mean alone; the truncation figure did not.
 #     This value is FIXED across all algorithm arms for matched comparison.
 #
 # Launch through the flight recorder, never directly:
