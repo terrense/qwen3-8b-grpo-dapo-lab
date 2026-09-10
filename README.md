@@ -167,24 +167,17 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| Infrastructure validation | **PASS** |
-| CUDA 13 / torch 2.11 stack | **PASS** |
-| Qwen3-8B via vLLM 0.24 | **PASS** |
-| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
-| RLVR verifier gate | **PASS** |
-| Flight recorder | **ACTIVE** |
-| R0 — GRPO smoke | **IN PROGRESS** |
-| R1 — Vanilla GRPO | **NOT RUN** |
-| R2 — DAPO | **NOT RUN** |
-| R3 — Failure injection | **NOT RUN** |
+| Infrastructure / CUDA 13 / 4-GPU NCCL / verifier gate | PASS |
+| R0 GRPO smoke | COMPLETED, 2 updates |
+| R1 vanilla GRPO | COMPLETED, 20 updates, launcher exit 0 |
+| R2 DAPO / Dr.GRPO / GSPO / VAPO / failure injection | NOT RUN |
 
-**Live run** `R1_grpo_baseline` · step **19** ·
-health **GREEN** · reward -0.4062 ·
-KL -0.00002 · entropy 0.3319 ·
-effective signal 0.56 ·
-incidents 3
-
-_Auto-updated 2026-09-10T14:21:40 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+R1 validation: **49.5% at update 10, 48.5% at update 20**.
+Effective-signal groups: **63.75%** overall. Configured-cap hits: **5/2560 (0.1953%)**;
+exact truncation unavailable. Three detector warnings and an exit-phase traceback require
+qualified interpretation; root causes remain PENDING.
+[Full R1 analysis](analysis/R1_baseline_report.md) · [Final status](status/latest.md).
+Training stopped; waiting for user direction.
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

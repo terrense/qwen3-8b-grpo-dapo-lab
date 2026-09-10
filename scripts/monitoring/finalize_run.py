@@ -72,7 +72,8 @@ def main():
 
     man_path = os.path.join(a.run_dir, "run_manifest.json")
     man = json.load(open(man_path)) if os.path.exists(man_path) else {}
-    man["end_ts"] = time.time()
+    man.setdefault("end_ts", time.time())  # preserve observed run end on regeneration
+    man["report_generated_ts"] = time.time()
     man["exit_code"] = a.exit_code
     man["updates_recorded"] = len(rows)
     with open(man_path, "w") as f:
@@ -102,6 +103,8 @@ def main():
         v = col(rows, k)
         if v:
             timing_lines.append(f"| {lab} | {statistics.mean(v):.1f} % |")
+        else:
+            timing_lines.append(f"| {lab} | unavailable |")
     timing_tbl = ("| stage | mean share of update wall time |\n|---|---|\n"
                   + "\n".join(timing_lines)) if timing_lines else \
                  "Stage timing attribution unavailable."
@@ -131,11 +134,11 @@ def main():
 | Started | {time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(man.get('start_ts', 0)))} |
 | Exit code | `{a.exit_code}` |
 
-Full resolved config: `resolved_config.yaml`. Launch command: `command.txt`.
+Launch command: `command.txt`. When present, `launch_overrides.json` records overrides extracted from the actual trainer log; it is not a full resolved configuration. Check `resolved_config.yaml` before treating it as evidence (R1 originally contained only a placeholder).
 
 ## Outcome
 
-{'The trainer exited cleanly.' if a.exit_code == 0 else
+{'The launcher recorded trainer exit code 0. Exit code alone does not rule out teardown warnings; see the analysis report.' if a.exit_code == 0 else
  f'The trainer exited non-zero (`{a.exit_code}`). The exit code is preserved verbatim by the launcher and is NOT swallowed.' if a.exit_code else
  'Exit status unavailable.'}
 
@@ -169,9 +172,9 @@ actually contributed gradient. See `figures/04_group_signal.png`.
 |---|---|
 | KL (`actor/ppo_kl`) | {stat_line(rows, 'kl', '{:.5f}')} |
 | entropy | {stat_line(rows, 'entropy')} |
-| clip fraction (total) | {stat_line(rows, 'clip_fraction')} |
-| clip fraction lower | {stat_line(rows, 'clip_fraction_low')} |
-| clip fraction upper | {stat_line(rows, 'clip_fraction_high')} |
+| PPO objective clip fraction | {stat_line(rows, 'clip_fraction')} |
+| directional lower clip (not emitted) | {stat_line(rows, 'clip_fraction_low')} |
+| directional upper clip (not emitted) | {stat_line(rows, 'clip_fraction_high')} |
 | advantage mean | {stat_line(rows, 'advantage_mean')} |
 
 See `figures/02_policy_dynamics.png`, `figures/03_ratio_grad.png`.
@@ -182,7 +185,8 @@ See `figures/02_policy_dynamics.png`, `figures/03_ratio_grad.png`.
 |---|---|
 | response length mean | {stat_line(rows, 'response_length_mean', '{:.1f}')} |
 | response length max | {stat_line(rows, 'response_length_max', '{:.0f}')} |
-| truncation rate | {stat_line(rows, 'truncation_rate', '{:.4f}')} |
+| configured-cap hit proxy | {stat_line(rows, 'cap_hit_rate', '{:.4f}')} |
+| exact truncation / finish reason | unavailable |
 
 See `figures/05_length_dynamics.png`.
 

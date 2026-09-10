@@ -41,8 +41,8 @@ DIRECT_MAP = {
     "kl": "actor/ppo_kl",                      # in-batch approx KL (old vs current)
     "kl_penalty_coeff": "actor/reward_kl_penalty_coeff",
     "kl_penalty": "actor/reward_kl_penalty",
-    "clip_fraction_high": "actor/pg_clipfrac",        # upper clip
-    "clip_fraction_low": "actor/pg_clipfrac_lower",   # lower clip
+    "clip_fraction": "actor/pg_clipfrac",  # PPO objective clipping, either sign
+    "dual_clip_fraction": "actor/pg_clipfrac_lower", # vanilla dual-clip branch
     # reward / score
     "reward_mean": "critic/rewards/mean",
     "reward_max": "critic/rewards/max",
@@ -58,7 +58,8 @@ DIRECT_MAP = {
     "response_length_mean": "response_length/mean",
     "response_length_max": "response_length/max",
     "response_length_min": "response_length/min",
-    "truncation_rate": "response_length/clip_ratio",   # fraction hitting the cap
+    "response_width_hit_fraction": "response_length/clip_ratio", # tensor width, NOT configured cap
+    "validation_accuracy": "val-core/math_dapo/acc/mean@1",
     "prompt_length_mean": "prompt_length/mean",
     "prompt_length_max": "prompt_length/max",
     "prompt_length_clip_ratio": "prompt_length/clip_ratio",
@@ -113,6 +114,7 @@ TIMING_FIELDS = ["t_rollout", "t_old_logprob", "t_ref_logprob", "t_values", "t_a
 
 CSV_COLUMNS = [
     "global_step", "wall_iso", "restart_epoch",
+    "validation_accuracy", "dual_clip_fraction", "response_width_hit_fraction", "cap_hit_rate", "t_testing",
     "policy_loss", "learning_rate", "grad_norm", "entropy", "kl",
     "clip_fraction", "clip_fraction_low", "clip_fraction_high",
     "reward_mean", "reward_std", "reward_max", "reward_min",
@@ -268,7 +270,7 @@ def group_stats_from_rollout_dump(dump_dir, step):
     return out
 
 
-def build_row(step, data, dump_dir, restart_epoch, prev_step, wall_iso, gpu_peak):
+def build_row(step, data, dump_dir, restart_epoch, prev_step, wall_iso, gpu_peak, configured_cap=None):
     row = {c: UNAVAILABLE for c in CSV_COLUMNS}
     row["global_step"] = step
     row["wall_iso"] = wall_iso
@@ -279,11 +281,15 @@ def build_row(step, data, dump_dir, restart_epoch, prev_step, wall_iso, gpu_peak
             row[canon] = _f(data, verl_key)
     row["learning_rate"] = find_lr(data)
 
-    lo, hi = row.get("clip_fraction_low"), row.get("clip_fraction_high")
-    if lo is not None and hi is not None:
-        row["clip_fraction"] = lo + hi
-    elif hi is not None:
-        row["clip_fraction"] = hi
+    # A padded/dynamically packed tensor width is not the configured generation cap.
+    # This is a cap-hit proxy only; finish reasons were not saved by this trainer.
+    mx = row.get("response_length_max")
+    raw = row.get("response_width_hit_fraction")
+    if configured_cap is not None and mx is not None:
+        if mx < configured_cap:
+            row["cap_hit_rate"] = 0.0
+        elif mx == configured_cap and raw is not None and raw > 0:
+            row["cap_hit_rate"] = raw
 
     row.update({k: v for k, v in group_stats_from_rollout_dump(dump_dir, step).items()
                 if v is not UNAVAILABLE})
@@ -293,12 +299,12 @@ def build_row(step, data, dump_dir, restart_epoch, prev_step, wall_iso, gpu_peak
     if tstep and tstep > 0:
         def pct(x):
             return round(100.0 * x / tstep, 2) if isinstance(x, (int, float)) else UNAVAILABLE
-        row["pct_rollout"] = pct(row.get("t_rollout") or 0.0)
-        row["pct_reward"] = pct(row.get("t_reward") or 0.0)
+        row["pct_rollout"] = pct(row.get("t_rollout"))
+        row["pct_reward"] = pct(row.get("t_reward"))
         lp = (row.get("t_old_logprob") or 0.0) + (row.get("t_ref_logprob") or 0.0)
-        row["pct_logprob"] = pct(lp)
-        row["pct_actor_update"] = pct(row.get("t_actor_update") or 0.0)
-        row["pct_weight_sync"] = pct(row.get("t_weight_sync") or 0.0)
+        row["pct_logprob"] = pct(lp) if row.get("t_old_logprob") is not None and row.get("t_ref_logprob") is not None else UNAVAILABLE
+        row["pct_actor_update"] = pct(row.get("t_actor_update"))
+        row["pct_weight_sync"] = pct(row.get("t_weight_sync"))
         accounted = sum(v for v in (row.get("t_rollout"), row.get("t_reward"),
                                     row.get("t_actor_update"), row.get("t_weight_sync"),
                                     row.get("t_checkpoint"), lp)
@@ -363,6 +369,11 @@ def collect(run_dir, verl_jsonl, dump_dir, restart_epoch=0):
             except Exception:  # noqa: BLE001
                 continue
 
+    configured_cap = None
+    override_path = os.path.join(run_dir, "launch_overrides.json")
+    if os.path.exists(override_path):
+        with open(override_path) as f:
+            configured_cap = int(json.load(f)["overrides"]["data.max_response_length"])
     rows, prev_step = [], None
     import time as _t
     for rec in records:
@@ -371,14 +382,14 @@ def collect(run_dir, verl_jsonl, dump_dir, restart_epoch=0):
         now = _t.time()
         peaks = gpu_peaks_between(sysj, now - 3600, now + 1)
         rows.append(build_row(step, data, dump_dir, restart_epoch, prev_step,
-                              _t.strftime("%Y-%m-%dT%H:%M:%S"), peaks))
+                              _t.strftime("%Y-%m-%dT%H:%M:%S"), peaks, configured_cap))
         prev_step = step
 
     with open(out_jsonl, "w") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
     with open(out_csv, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        w = csv.DictWriter(f, fieldnames=CSV_COLUMNS, lineterminator="\n")
         w.writeheader()
         for r in rows:
             w.writerow({k: ("" if r.get(k) is None else r.get(k)) for k in CSV_COLUMNS})

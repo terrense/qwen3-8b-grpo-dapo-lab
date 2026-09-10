@@ -24,9 +24,10 @@ and the **real VeRL key** each one comes from at commit `1252cc71`.
 | canonical | VeRL key | notes |
 |---|---|---|
 | `kl` | `actor/ppo_kl` | in-batch approximate KL between the sampling policy and the current policy |
-| `clip_fraction_high` | `actor/pg_clipfrac` | **upper** clip fraction |
-| `clip_fraction_low` | `actor/pg_clipfrac_lower` | **lower** clip fraction |
-| `clip_fraction` | derived | `low + high` |
+| `clip_fraction_high` | **NOT EMITTED for vanilla PPO** | directional upper clipping unavailable |
+| `clip_fraction_low` | **NOT EMITTED for vanilla PPO** | directional lower clipping unavailable |
+| `clip_fraction` | `actor/pg_clipfrac` | objective clipping for either advantage sign; do not add dual clipping |
+| `dual_clip_fraction` | `actor/pg_clipfrac_lower` | vanilla dual-clip branch, not directional lower clipping |
 | `kl_penalty` / `kl_penalty_coeff` | `actor/reward_kl_penalty` / `..._coeff` | only when KL is applied in the reward |
 | `importance_ratio_p01 … max` | **NOT EMITTED** | requires in-trainer instrumentation; deferred, not faked |
 
@@ -76,8 +77,10 @@ trains the policy can differ by a large factor, and only this metric shows the g
 | canonical | VeRL key | notes |
 |---|---|---|
 | `response_length_mean/max/min` | `response_length/{mean,max,min}` | |
-| `truncation_rate` | `response_length/clip_ratio` | fraction hitting `max_response_length` |
-| `prompt_length_clip_ratio` | `prompt_length/clip_ratio` | over-long prompts |
+| `response_width_hit_fraction` | `response_length/clip_ratio` | equality to tensor width, not necessarily configured cap |
+| `cap_hit_rate` | native max + width hits + verified launch override | configured-cap proxy; zero if observed max is below cap; otherwise width hits when max equals cap |
+| `truncation_rate` | **NOT EMITTED here** | exact finish reasons unavailable |
+| `prompt_length_clip_ratio` | `prompt_length/clip_ratio` | tensor-width hits; not evidence of over-long prompts |
 | `aborted_ratio` | `response/aborted_ratio` | |
 | `response_length_median/p95` | derived from the rollout dump | |
 | `eos_rate` | derived | `finish_reason == "stop"` |
@@ -144,3 +147,7 @@ entropy and grad norm is unknown, so fixed thresholds either fire constantly or 
 Continuous metrics are judged against a rolling median with a MAD-based robust z-score,
 which tolerates the heavy tails RL produces. Only quantities with genuine absolute
 meaning — NaN/Inf, disk full, process death — get hard rules.
+
+## R1 post-run audit corrections
+
+Validation maps only the measured `val-core/math_dapo/acc/mean@1` to `validation_accuracy`; other steps remain unavailable. Missing stage timings retain missing percentage shares. Native `ppo_kl` is a signed sample mean of old minus current logprob and can be negative. Group signal describes nonzero reward advantages, not all regularization gradients. R1 re-scoring statistics are in `analysis/R1_audit.json`; historical verifier runtime exceptions remain unavailable. Native dump files omit token IDs and finish reasons, so token median/p95 and exact truncation remain unavailable. See `analysis/R1_baseline_report.md`.

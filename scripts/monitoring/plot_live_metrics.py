@@ -114,7 +114,19 @@ def fig_reward(rows, out):
         axes[0].fill_between(xs, [m - s for m, s in zip(series(rows, "reward_mean")[1], ys)],
                              [m + s for m, s in zip(series(rows, "reward_mean")[1], ys)],
                              color=C["a"], alpha=0.12, label="+/- reward std")
-    ok = panel(axes[1], rows, "validation_accuracy", "validation accuracy", C["c"])
+    vx, vy = series(rows, "validation_accuracy")
+    ok = bool(vx)
+    if ok:
+        axes[1].scatter(vx, vy, color=C["c"], s=35, label="measured validation")
+        for step, acc in zip(vx, vy):
+            axes[1].annotate(f"{acc:.1%}", (step, acc), xytext=(0, 8), textcoords="offset points", ha="center")
+        axes[1].set_ylim(0, 1)
+        axes[1].set_xticks(vx)
+        axes[1].set_xlabel("optimizer update (other steps not evaluated)")
+        axes[1].legend(fontsize=7)
+    else:
+        panel(axes[1], rows, "validation_accuracy", "validation accuracy", C["c"])
+    axes[0].text(0.02, 0.98, "Shading: +/- sample SD, not confidence interval", transform=axes[0].transAxes, va="top", fontsize=7)
     axes[1].set_title("Validation accuracy" + ("" if ok else " (not evaluated yet)"))
     for a in axes:
         mark_restarts(a, rows)
@@ -125,12 +137,12 @@ def fig_reward(rows, out):
 def fig_policy(rows, out):
     fig, axes = plt.subplots(1, 3, figsize=(13, 3.4))
     panel(axes[0], rows, "kl", "KL", C["b"])
-    axes[0].set_title("KL divergence")
+    axes[0].set_title("Signed approximate KL (old - current logprob)")
     panel(axes[1], rows, "entropy", "entropy", C["e"])
     axes[1].set_title("Policy entropy")
     xs, ys = series(rows, "clip_fraction")
     if xs:
-        axes[2].plot(xs, ys, color=C["d"], lw=1.2, label="clip fraction (total)")
+        axes[2].plot(xs, ys, color=C["d"], lw=1.2, label="PPO objective clip fraction")
     for k, c, lab in (("clip_fraction_low", C["a"], "lower clip"),
                       ("clip_fraction_high", C["b"], "upper clip")):
         x2, y2 = series(rows, k)
@@ -231,12 +243,12 @@ def fig_length(rows, out):
     axes[0].set_title("Response length")
     axes[0].set_xlabel("optimizer update")
     axes[0].set_ylabel("tokens")
-    ok = panel(axes[1], rows, "truncation_rate", "truncation rate", C["b"],
+    ok = panel(axes[1], rows, "cap_hit_rate", "configured-cap hit proxy", C["b"],
                smooth_overlay=False)
     if ok:
         axes[1].axhline(0.30, color=C["d"], ls=":", lw=1, label="0.30 heuristic warning")
         axes[1].legend(fontsize=7)
-    axes[1].set_title("Truncation rate")
+    axes[1].set_title("Configured-cap hits; finish reasons unavailable")
     for a in axes:
         mark_restarts(a, rows)
     fig.savefig(out)
@@ -269,13 +281,19 @@ def fig_timing(rows, out):
     xs = [r["global_step"] for r in rows if isinstance(r.get("pct_rollout"), (int, float))]
     if xs:
         bottom = [0.0] * len(xs)
+        missing = []
         for k, lab, c in pk:
+            if not any(isinstance(r.get(k), (int, float)) for r in rows):
+                missing.append(lab)
+                continue
             vals = [r.get(k) or 0.0 for r in rows
                     if isinstance(r.get("pct_rollout"), (int, float))]
             axes[1].bar(xs, vals, bottom=bottom, color=c, label=lab, width=0.8)
             bottom = [b + v for b, v in zip(bottom, vals)]
         axes[1].legend(fontsize=7, ncol=2)
         axes[1].set_ylabel("% of update wall time")
+        if missing:
+            axes[1].text(0.02, 0.98, "unavailable: " + ", ".join(missing), transform=axes[1].transAxes, va="top", fontsize=7)
     else:
         axes[1].text(0.5, 0.5, "time attribution\nunavailable", ha="center", va="center",
                      transform=axes[1].transAxes, color=C["f"])

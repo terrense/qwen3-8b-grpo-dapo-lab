@@ -4,7 +4,7 @@
 **Outcome:** **COMPLETED**
 **Duration:** 36.4 min
 **Optimizer updates recorded:** 20
-**Generated:** 2026-09-10T14:21:57
+**Generated:** 2026-09-10T14:55:52
 
 ## Configuration
 
@@ -19,11 +19,11 @@
 | Started | 2026-09-10T13:45:35 |
 | Exit code | `0` |
 
-Full resolved config: `resolved_config.yaml`. Launch command: `command.txt`.
+Launch command: `command.txt`. When present, `launch_overrides.json` records overrides extracted from the actual trainer log; it is not a full resolved configuration. Check `resolved_config.yaml` before treating it as evidence (R1 originally contained only a placeholder).
 
 ## Outcome
 
-The trainer exited cleanly.
+The launcher recorded trainer exit code 0. Exit code alone does not rule out teardown warnings; see the analysis report.
 
 ## Training Dynamics
 
@@ -55,9 +55,9 @@ actually contributed gradient. See `figures/04_group_signal.png`.
 |---|---|
 | KL (`actor/ppo_kl`) | first -0.00002 -> last 0.00004 (min -0.00005, max 0.00004, mean -0.00001) |
 | entropy | first 0.3585 -> last 0.3384 (min 0.2255, max 0.4432, mean 0.3307) |
-| clip fraction (total) | first 0.0001 -> last 0.0001 (min 0.0001, max 0.0003, mean 0.0002) |
-| clip fraction lower | first 0.0000 -> last 0.0000 (min 0.0000, max 0.0000, mean 0.0000) |
-| clip fraction upper | first 0.0001 -> last 0.0001 (min 0.0001, max 0.0003, mean 0.0002) |
+| PPO objective clip fraction | first 0.0001 -> last 0.0001 (min 0.0001, max 0.0003, mean 0.0002) |
+| directional lower clip (not emitted) | unavailable |
+| directional upper clip (not emitted) | unavailable |
 | advantage mean | first -0.0434 -> last -0.0778 (min -0.0778, max 0.0350, mean -0.0173) |
 
 See `figures/02_policy_dynamics.png`, `figures/03_ratio_grad.png`.
@@ -68,7 +68,8 @@ See `figures/02_policy_dynamics.png`, `figures/03_ratio_grad.png`.
 |---|---|
 | response length mean | first 1683.8 -> last 1508.3 (min 1192.2, max 2188.1, mean 1674.4) |
 | response length max | first 7068 -> last 8192 (min 3820, max 8192, mean 6027) |
-| truncation rate | first 0.0078 -> last 0.0078 (min 0.0078, max 0.0234, mean 0.0086) |
+| configured-cap hit proxy | first 0.0000 -> last 0.0078 (min 0.0000, max 0.0234, mean 0.0020) |
+| exact truncation / finish reason | unavailable |
 
 See `figures/05_length_dynamics.png`.
 
@@ -77,7 +78,7 @@ See `figures/05_length_dynamics.png`.
 | stage | mean share of update wall time |
 |---|---|
 | rollout | 41.0 % |
-| verifier | 0.0 % |
+| verifier | unavailable |
 | logprob | 19.6 % |
 | actor update | 34.3 % |
 | weight sync | 4.7 % |
@@ -120,15 +121,15 @@ No restarts. Metrics are never stitched across a restart.
 
 ## What We Learned
 
-TO BE COMPLETED BY A HUMAN — cite steps, metrics, figures and incident IDs.
+See [R1 baseline analysis](../../analysis/R1_baseline_report.md) for audited conclusions and incident evidence.
 
 ## Open Questions
 
-TO BE COMPLETED BY A HUMAN.
+Validation improvement, exact finish reasons, and teardown signal cause remain unresolved; see the analysis.
 
 ## Next Experiment
 
-TO BE DECIDED.
+STOP. Await user direction; R2 and later experiments NOT RUN.
 
 ---
 

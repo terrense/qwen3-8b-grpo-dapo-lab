@@ -381,3 +381,80 @@ Two, and the second is the expensive one:
    synthetic sample. Instead it cost a full generation arm. Post-processing code is
    exactly where this happens, because it only executes once the expensive part is
    already done — cheap smoke-test first, then spend the GPU.
+
+
+---
+
+## INC-005 — R1 post-run reporting semantics and provenance gaps
+
+**Date / stage:** 2026-09-10, R1 post-run audit. **Run:** R1_grpo_baseline, updates 1–20.
+
+### Observed symptom
+Width-hit fractions were labeled truncation even at update 10 with maximum 6625 < configured 8192.
+Missing verifier timing became 0%. Validation at updates 10/20 was omitted from the CSV/plot.
+Vanilla PPO objective clipping and dual clipping were mislabeled upper/lower.
+The resolved-config file was a placeholder; the manifest dataset hash differed from the selected deduplicated file.
+The final public status still showed update 19 after 20 updates completed.
+
+### Hypotheses
+1. Training/configuration malfunction.
+2. Instrumentation mappings and metadata capture fail to represent the underlying run.
+
+### Evidence checked
+Source reads: metric_utils.py uses response tensor width; core_algos.py distinguishes objective and dual clipping.
+Actual shell xtrace confirms 8192, mini-batch 8 < batch 16, and deduplicated training path.
+Native metrics have two validation results. All 2560 saved outputs reproduce their original scores.
+Report regeneration previously overwrote end_ts with audit time; the original recorded end is now preserved.
+See analysis/R1_baseline_report.md and analysis/R1_audit.json for values and limitations.
+
+### Root cause
+PENDING
+
+### Fix
+Reporting-only mapping corrections; keep exact truncation unavailable and show a labeled cap-hit proxy.
+Preserve missingness, native clipping meanings, actual validation points and original end timestamp.
+Retain original manifest provenance; supplement with actual xtrace overrides and post-run dataset hashes.
+Mark status completed. No training hyperparameter or verifier changes.
+
+### Post-fix evidence
+CPU synthetic reporting tests passed; regenerated 20-row metrics and figures.
+Validation is 0.495 / 0.485 only at steps 10 / 20; verifier timing remains unavailable.
+Configured-cap proxy is 5/2560 versus 22/2560 tensor-width hits.
+Native training metric records and all detector root-cause fields were preserved.
+
+### Lesson
+Audit an instrument's source definition before interpreting a label; missing metadata cannot be reconstructed as a historical measurement.
+
+---
+
+## INC-006 — DataLoader signal exception during R1 exit cleanup
+
+**Date / stage:** 2026-09-10, R1 termination. **Run / step:** R1_grpo_baseline, after 20/20 progress.
+
+### Observed symptom
+Exit-phase traceback: weakref._exitfunc -> torch.library._del_library ->
+torch DataLoader signal handler -> RuntimeError: DataLoader worker killed by signal.
+Ray debug messages report child exits with code 1.
+
+### Hypotheses
+1. Worker termination during normal distributed teardown.
+2. External kill, including resource pressure.
+3. Another cleanup lifecycle problem.
+
+### Evidence checked
+The original traceback is in the weakref exit finalizer. All 20 native metric rows and rollout dumps exist.
+Final validation exists; launcher explicitly records trainer exit code 0 and completed finalization.
+No native scalar is nonfinite. GPU allocations are released at post-run audit.
+A complete kernel/cgroup kill history was not captured; the signal's cause is not established.
+
+### Root cause
+PENDING
+
+### Fix
+No training restart or environmental change. Preserve the anomaly and qualify the exit-0 report.
+
+### Post-fix evidence
+NOT RUN — no causal fix applied. Existing completed run artifacts were independently checked.
+
+### Lesson
+Distinguish top-level exit code, child exits and shutdown traceback context; neither hide the traceback nor reclassify completed measurements without evidence.
