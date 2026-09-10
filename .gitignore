@@ -79,3 +79,8 @@ id_ed25519*
 !figures/**/*.png
 !figures/**/*.pdf
 !docs/**
+
+# MUST be last: the `!scripts/**` re-include above would otherwise resurrect
+# bytecode under scripts/. In gitignore, the LAST matching rule wins.
+**/__pycache__/
+*.pyc
