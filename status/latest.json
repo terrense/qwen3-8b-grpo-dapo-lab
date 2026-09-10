@@ -1,0 +1,43 @@
+{
+  "run_id": "R0_grpo_smoke",
+  "run_uid": "R0_grpo_smoke-20260910-132022",
+  "algorithm": "GRPO",
+  "model": "Qwen/Qwen3-8B",
+  "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
+  "current_step": 1,
+  "updates_recorded": 1,
+  "elapsed_s": 406.4,
+  "health": "GREEN",
+  "reward_mean": -0.1875,
+  "kl": 0.0,
+  "entropy": 0.3430328965187073,
+  "clip_fraction": 0.0,
+  "grad_norm": 0.2546851336956024,
+  "mixed_group_ratio": null,
+  "zero_std_group_ratio": null,
+  "effective_signal_fraction": null,
+  "response_length_mean": 1532.21875,
+  "response_length_p95": null,
+  "truncation_rate": 0.03125,
+  "t_rollout": 18.327437672764063,
+  "t_actor_update": 8.296261128038168,
+  "gpu_util_pct": [
+    99,
+    100,
+    99,
+    100
+  ],
+  "gpu_mem_used_gib": [
+    52.732,
+    53.736,
+    53.716,
+    53.697
+  ],
+  "disk_root_pct": 1.27,
+  "disk_data_pct": 3.05,
+  "n_incidents": 0,
+  "latest_incident": null,
+  "last_checkpoint": null,
+  "git_commit": "9d22a75",
+  "updated": "2026-09-10T13:27:09"
+}

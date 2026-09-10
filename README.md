@@ -142,11 +142,19 @@ Full definitions and the real VeRL key behind each metric:
 | Qwen3-8B via vLLM 0.24 | **PASS** |
 | 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
 | RLVR verifier gate | **PASS** |
-| Flight recorder | **READY** |
-| R0 — GRPO smoke | **NOT RUN** |
-| R1 — Vanilla GRPO | **BLOCKED** — response-length budget unresolved |
+| Flight recorder | **ACTIVE** |
+| R0 — GRPO smoke | **IN PROGRESS** |
+| R1 — Vanilla GRPO | **NOT RUN** |
 | R2 — DAPO | **NOT RUN** |
 | R3 — Failure injection | **NOT RUN** |
+
+**Live run** `R0_grpo_smoke` · step **1** ·
+health **GREEN** · reward -0.1875 ·
+KL 0.00000 · entropy 0.3430 ·
+effective signal — ·
+incidents 0
+
+_Auto-updated 2026-09-10T13:27:09 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically
