@@ -79,6 +79,19 @@ DIRECT_MAP = {
     "t_checkpoint": "timing_s/save_checkpoint",
     "t_testing": "timing_s/testing",
     "t_step": "timing_s/step",
+    # policy provenance -- VeRL publishes these natively; do NOT re-derive them.
+    "policy_staleness_steps": "training/off_policy/trajectory_staleness/mean",
+    "policy_staleness_max": "training/off_policy/trajectory_staleness/max",
+    "trajectory_span_mean": "training/off_policy/trajectory_spans/mean",
+    # weight-sync correctness: rollout policy vs training policy agreement
+    "rollout_train_prob_corr": "training/rollout_actor_probs_pearson_corr",
+    "rollout_train_prob_diff_mean": "training/rollout_probs_diff_mean",
+    "rollout_train_prob_diff_max": "training/rollout_probs_diff_max",
+    "rollout_train_kl": "rollout_corr/kl",
+    "actor_peak_mem_gb": "actor/perf/max_memory_allocated_gb",
+    "actor_reserved_mem_gb": "actor/perf/max_memory_reserved_gb",
+    "mfu_actor": "perf/mfu/actor",
+    "kl_loss": "actor/kl_loss",
 }
 
 TIMING_FIELDS = ["t_rollout", "t_old_logprob", "t_ref_logprob", "t_values", "t_adv",
@@ -105,6 +118,16 @@ CSV_COLUMNS = [
     "pct_rollout", "pct_reward", "pct_logprob", "pct_actor_update",
     "pct_weight_sync", "pct_other",
     "rollout_policy_step", "consumer_update_step", "policy_staleness_steps",
+    "policy_staleness_max",
+    "trajectory_span_mean",
+    "rollout_train_prob_corr",
+    "rollout_train_prob_diff_mean",
+    "rollout_train_prob_diff_max",
+    "rollout_train_kl",
+    "actor_peak_mem_gb",
+    "actor_reserved_mem_gb",
+    "mfu_actor",
+    "kl_loss",
     "peak_vram_gpu0", "peak_vram_gpu1", "peak_vram_gpu2", "peak_vram_gpu3",
 ]
 
@@ -258,12 +281,13 @@ def build_row(step, data, dump_dir, restart_epoch, prev_step, wall_iso, gpu_peak
                         if isinstance(v, (int, float)))
         row["pct_other"] = round(max(0.0, 100.0 - 100.0 * accounted / tstep), 2)
 
-    # policy provenance: synchronous GRPO consumes rollouts from the policy version
-    # produced by the previous weight sync, so staleness should be a constant.
-    row["rollout_policy_step"] = prev_step if prev_step is not None else step
+    # policy provenance. VeRL measures staleness itself
+    # (training/off_policy/trajectory_staleness), mapped above -- that value is
+    # authoritative. Deriving it from step deltas gave a WRONG answer (0 then 1)
+    # while VeRL reported a true 0 for both updates, so the derivation is gone.
     row["consumer_update_step"] = step
-    if row["rollout_policy_step"] is not None:
-        row["policy_staleness_steps"] = step - row["rollout_policy_step"]
+    if row.get("policy_staleness_steps") is not None:
+        row["rollout_policy_step"] = step - row["policy_staleness_steps"]
 
     for i in range(4):
         row[f"peak_vram_gpu{i}"] = gpu_peak.get(i, UNAVAILABLE)

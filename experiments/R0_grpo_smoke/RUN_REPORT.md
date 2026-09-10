@@ -2,9 +2,9 @@
 
 **Run UID:** `R0_grpo_smoke-20260910-132022`
 **Outcome:** **COMPLETED**
-**Duration:** 7.1 min
+**Duration:** 10.0 min
 **Optimizer updates recorded:** 2
-**Generated:** 2026-09-10T13:27:28
+**Generated:** 2026-09-10T13:30:20
 
 ## Configuration
 
@@ -38,12 +38,12 @@ The trainer exited cleanly.
 | metric | trajectory |
 |---|---|
 | reward mean | first -0.1875 -> last -0.3750 (min -0.3750, max -0.1875, mean -0.2812) |
-| reward std | unavailable |
-| mixed group ratio | unavailable |
-| all-correct group ratio | unavailable |
-| all-wrong group ratio | unavailable |
-| zero-std group ratio | unavailable |
-| effective signal fraction | unavailable |
+| reward std | first 0.9823 -> last 0.9270 (min 0.9270, max 0.9823, mean 0.9546) |
+| mixed group ratio | first 0.500 -> last 0.625 (min 0.500, max 0.625, mean 0.562) |
+| all-correct group ratio | first 0.125 -> last 0.000 (min 0.000, max 0.125, mean 0.062) |
+| all-wrong group ratio | first 0.375 -> last 0.375 (min 0.375, max 0.375, mean 0.375) |
+| zero-std group ratio | first 0.500 -> last 0.375 (min 0.375, max 0.500, mean 0.438) |
+| effective signal fraction | first 0.500 -> last 0.625 (min 0.500, max 0.625, mean 0.562) |
 
 Zero-variance groups produce an identically zero GRPO advantage, so
 `effective_signal_fraction` is the fraction of the nominal prompt batch that
@@ -89,7 +89,7 @@ See `figures/05_length_dynamics.png`.
 | step wall time (s) | first 64.8 -> last 41.8 (min 41.8, max 64.8, mean 53.3) |
 | peak VRAM GPU0 (GiB) | first 86.4 -> last 86.4 (min 86.4, max 86.4, mean 86.4) |
 
-**Policy provenance / staleness:** observed values [0, 1] over 2 updates. For synchronous GRPO this should
+**Policy provenance / staleness:** observed values [0] over 2 updates. For synchronous GRPO this should
 be a constant; a drifting value would mean rollouts are being consumed by a
 different policy version than the one that generated them.
 

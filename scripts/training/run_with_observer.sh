@@ -43,6 +43,9 @@ SAMPLER_LOG="$LAB/logs/$RUN_UID/sampler.log"
 VERL_JSONL="$RUN_DIR/metrics/verl_file_logger.jsonl"
 DUMP_DIR="$LAB/logs/$RUN_UID/rollout_dump"      # LOCAL ONLY, never committed
 mkdir -p "$DUMP_DIR"
+# The training script must write its rollout dump where the observer reads it,
+# otherwise group-signal stats and trajectory audit silently come back empty.
+export ROLLOUT_DUMP_DIR="$DUMP_DIR"
 
 # ---- B. provenance --------------------------------------------------------
 VERL_SHA=$(git -C "$LAB/repos/verl" rev-parse HEAD 2>/dev/null || echo unknown)

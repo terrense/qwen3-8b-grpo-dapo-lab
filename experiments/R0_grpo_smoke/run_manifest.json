@@ -19,7 +19,7 @@
   "trainer_log": "/root/autodl-tmp/rl_lab/logs/R0_grpo_smoke-20260910-132022/trainer.log",
   "rollout_dump_dir": "/root/autodl-tmp/rl_lab/logs/R0_grpo_smoke-20260910-132022/rollout_dump",
   "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint.",
-  "end_ts": 1789018048.0472238,
+  "end_ts": 1789018220.501957,
   "exit_code": 0,
   "updates_recorded": 2
 }
