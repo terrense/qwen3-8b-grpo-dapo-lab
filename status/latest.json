@@ -1,12 +1,12 @@
 {
   "run_id": "R2_dapo_smoke",
-  "run_uid": "R2_dapo_smoke-20260910-170443",
+  "run_uid": "R2_dapo_smoke-20260910-171600",
   "algorithm": "DAPO",
   "model": "Qwen/Qwen3-8B",
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
   "current_step": null,
   "updates_recorded": 0,
-  "elapsed_s": 6.6,
+  "elapsed_s": 86.1,
   "health": "GREEN",
   "reward_mean": null,
   "kl": null,
@@ -22,22 +22,22 @@
   "t_rollout": null,
   "t_actor_update": null,
   "gpu_util_pct": [
-    0,
-    0,
-    0,
-    0
+    3,
+    100,
+    100,
+    100
   ],
   "gpu_mem_used_gib": [
-    0.503,
-    0.503,
-    0.503,
-    0.503
+    12.131,
+    28.02,
+    28.02,
+    28.02
   ],
   "disk_root_pct": 1.27,
   "disk_data_pct": 3.06,
   "n_incidents": 0,
   "latest_incident": null,
   "last_checkpoint": null,
-  "git_commit": "2e3160a",
-  "updated": "2026-09-10T17:04:49"
+  "git_commit": "25297a9",
+  "updated": "2026-09-10T17:17:26"
 }

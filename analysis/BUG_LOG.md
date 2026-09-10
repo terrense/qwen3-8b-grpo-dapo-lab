@@ -343,7 +343,45 @@ Ray 检测到是 `uv run` 起的，就想从 uv project 里推算脚本路径，
 
 把 recipe 软链到 `repos/verl/recipe/dapo` 再用 `-m recipe.dapo.main_dapo` 还是一样的错，说明软链没骗过它。
 
-**（还在处理）**
+拿 `HYDRA_FULL_ERROR=1` 打出完整调用链才看清：
+
+```
+verl/trainer/main_ppo.py:74      ray.init(**OmegaConf.to_container(ray_init_kwargs))
+ray/_private/worker.py:1396      return hook(runtime_env)
+ray/.../uv_runtime_env_hook.py:411   if _is_path(working_dir):
+```
+
+真凶在 verl 自己这边，`verl/trainer/constants_ppo.py:118-121`：
+
+```python
+runtime_env = {
+    "env_vars": PPO_RAY_RUNTIME_ENV["env_vars"].copy(),
+    **({"working_dir": None} if working_dir is None else {}),
+}
+```
+
+verl **故意**把 `working_dir` 塞成 `None`，意思是「别上传工作目录」。而 Ray 那个 hook 的逻辑是：
+
+```python
+if "working_dir" not in runtime_env:
+    runtime_env["working_dir"] = os.getcwd()
+working_dir = runtime_env["working_dir"]
+if _is_path(working_dir):     # None 进来就炸
+```
+
+键**存在但是 None**，所以既躲过了默认值那一步，又过不了类型检查。
+说白了就是 verl 和 Ray 2.55.1 对「不要 working_dir」这件事的表达方式不兼容。
+
+**解法**：`RAY_ENABLE_UV_RUN_RUNTIME_ENV=0`。
+
+这个 hook 干的事就是告诉 Ray worker 用哪个解释器 —— 而我本来就显式传了
+`ray_kwargs.ray_init.runtime_env.py_executable`，完全重复，关掉没有副作用。
+关掉之后 `DAPOTaskRunner` 正常起来了。
+
+**还没搞清楚的**：R0/R1 用完全一样的 `uv run` + `py_executable` 组合走
+`-m verl.trainer.main_ppo`，**没碰到这个错**。`RAY_ENABLE_UV_RUN_RUNTIME_ENV`
+默认是开的，两边都该触发 hook。为什么只有 `-m recipe.dapo.main_dapo` 会挂，
+目前没有解释。先记下来，不编。
 
 ---
 

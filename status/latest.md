@@ -1,16 +1,16 @@
 # Live Run Status
 
-_Updated 2026-09-10T17:04:49 · health **GREEN**_
+_Updated 2026-09-10T17:17:26 · health **GREEN**_
 
 | | |
 |---|---|
-| Run | `R2_dapo_smoke` (`R2_dapo_smoke-20260910-170443`) |
+| Run | `R2_dapo_smoke` (`R2_dapo_smoke-20260910-171600`) |
 | Algorithm | DAPO |
 | Model | Qwen/Qwen3-8B |
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
 | Current optimizer step | **None** |
 | Updates recorded | 0 |
-| Elapsed | 7 s |
+| Elapsed | 86 s |
 | Health | **GREEN** |
 
 ## Latest update
@@ -32,8 +32,8 @@ _Updated 2026-09-10T17:04:49 · health **GREEN**_
 
 ## System
 
-GPU util: `[0, 0, 0, 0]`
-GPU mem (GiB): `[0.503, 0.503, 0.503, 0.503]`
+GPU util: `[3, 100, 100, 100]`
+GPU mem (GiB): `[12.131, 28.02, 28.02, 28.02]`
 disk / : 1.27%   disk data: 3.06%
 
 ## Incidents
@@ -41,7 +41,7 @@ disk / : 1.27%   disk data: 3.06%
 0 recorded. Latest: `none`
 
 Last checkpoint: `none`
-Git commit: `2e3160a`
+Git commit: `25297a9`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._
