@@ -76,6 +76,17 @@ mkdir -p "$DUMP_DIR"
 # -- it could not locate the script within the project. Upstream runs
 # `python3 -m recipe.dapo.main_dapo`, so repos/verl/recipe/dapo is symlinked to
 # the recipe checkout and we use the module form, exactly as upstream does.
+# INC-008: verl deliberately sets runtime_env["working_dir"]=None
+# (constants_ppo.py:118-121) to avoid uploading a working dir. Ray 2.55.1 auto-runs
+# its uv runtime-env hook whenever the driver is under `uv run`, and that hook sees
+# the key present-but-None, skips its os.getcwd() default, and dies in _is_path(None).
+# We already pass py_executable explicitly -- which is exactly what the hook would
+# set -- so the auto-hook is redundant here. Turn it off.
+# OPEN QUESTION: R0/R1 ran the same uv/py_executable pattern through main_ppo and did
+# NOT hit this. The asymmetry between -m verl.trainer.main_ppo and
+# -m recipe.dapo.main_dapo is not yet explained -- recorded, not guessed.
+export RAY_ENABLE_UV_RUN_RUNTIME_ENV=0
+
 cd "$LAB/repos/verl"
 
 LAUNCH=(uv run --frozen --all-packages --extra vllm --extra fsdp python3)
