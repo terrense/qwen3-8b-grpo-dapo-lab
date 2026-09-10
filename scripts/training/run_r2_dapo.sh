@@ -62,12 +62,20 @@ NGPUS=${NGPUS:-4}
 DUMP_DIR=${ROLLOUT_DUMP_DIR:-$LAB/logs/R2_rollout_dump}
 mkdir -p "$DUMP_DIR"
 
-cd "$RECIPE"
+# INC-007: the recipe dapo_trainer.yaml declares
+#   hydra.searchpath: [file://verl/trainer/config]
+# -- a RELATIVE path, resolved against the CWD. Upstream runs
+# `python3 -m recipe.dapo.main_dapo` from the verl repo root, where that path
+# exists. Running main_dapo.py from the recipe directory makes Hydra fail with
+# "Could not load ppo_trainer". So: cd to the verl root and invoke the recipe
+# entry point by absolute path (hydra resolves config_path="config" relative to
+# main_dapo.py itself, so the recipe own config is still found).
+cd "$LAB/repos/verl"
 
-LAUNCH=(uv run --project "$LAB/repos/verl" --frozen --all-packages --extra vllm --extra fsdp python3)
-RAY=(ray_kwargs.ray_init.runtime_env.py_executable="uv -v run --project $LAB/repos/verl --frozen --all-packages --extra vllm --extra fsdp")
+LAUNCH=(uv run --frozen --all-packages --extra vllm --extra fsdp python3)
+RAY=(ray_kwargs.ray_init.runtime_env.py_executable="uv -v run --frozen --all-packages --extra vllm --extra fsdp")
 
-"${LAUNCH[@]}" main_dapo.py \
+"${LAUNCH[@]}" "$RECIPE/main_dapo.py" \
     algorithm.adv_estimator=grpo \
     algorithm.use_kl_in_reward=False \
     algorithm.kl_ctrl.kl_coef=0.0 \
