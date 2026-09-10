@@ -1,0 +1,57 @@
+{
+  "A_think_16384": {
+    "arm": "A_think_16384",
+    "thinking": true,
+    "cap": 16384,
+    "n_prompts": 16,
+    "G": 4,
+    "n": 64,
+    "wall_s": 438.5,
+    "out_tokens": 564485,
+    "tok_per_s": 1287,
+    "accuracy": 0.5625,
+    "reward_mean": 0.125,
+    "truncation_rate": 0.1875,
+    "len_mean": 8820.078125,
+    "len_median": 7124.0,
+    "len_p95": 16384,
+    "len_max": 16384,
+    "all_correct_group_ratio": 0.375,
+    "all_wrong_group_ratio": 0.3125,
+    "mixed_group_ratio": 0.3125,
+    "zero_std_group_ratio": 0.6875,
+    "states": {
+      "OK_CORRECT": 36,
+      "OK_INCORRECT": 16,
+      "TRUNCATED": 12
+    }
+  },
+  "B_nothink_4096": {
+    "arm": "B_nothink_4096",
+    "thinking": false,
+    "cap": 4096,
+    "n_prompts": 16,
+    "G": 4,
+    "n": 64,
+    "wall_s": 39.6,
+    "out_tokens": 94520,
+    "tok_per_s": 2389,
+    "accuracy": 0.3125,
+    "reward_mean": -0.375,
+    "truncation_rate": 0.015625,
+    "len_mean": 1476.875,
+    "len_median": 1314.0,
+    "len_p95": 3089,
+    "len_max": 4096,
+    "all_correct_group_ratio": 0.0625,
+    "all_wrong_group_ratio": 0.5,
+    "mixed_group_ratio": 0.4375,
+    "zero_std_group_ratio": 0.5625,
+    "states": {
+      "OK_CORRECT": 20,
+      "OK_INCORRECT": 36,
+      "PARSE_FAILURE": 7,
+      "TRUNCATED": 1
+    }
+  }
+}
