@@ -1,0 +1,323 @@
+===== BASIC SYSTEM INFO =====
+Thu Sep 10 11:29:05 CST 2026
+<REDACTED-HOST>
+Linux <REDACTED-HOST> 5.15.0-130-generic #140-Ubuntu SMP Wed Dec 18 17:59:53 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+===== GPU =====
+Thu Sep 10 11:29:05 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H20                     On  |   00000000:23:00.0 Off |                  Off |
+| N/A   33C    P0             73W /  500W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA H20                     On  |   00000000:33:00.0 Off |                  Off |
+| N/A   33C    P0             73W /  500W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA H20                     On  |   00000000:63:00.0 Off |                  Off |
+| N/A   31C    P0             74W /  500W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA H20                     On  |   00000000:83:00.0 Off |                  Off |
+| N/A   34C    P0             74W /  500W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+GPU 0: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+GPU 1: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+GPU 2: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+GPU 3: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+===== GPU DETAILS =====
+index, name, uuid, memory.total [MiB], memory.free [MiB], driver_version, pstate, temperature.gpu, power.limit [W]
+0, NVIDIA H20, <REDACTED-GPU-UUID>, 97871 MiB, 97357 MiB, 580.105.08, P0, 33, 500.00 W
+1, NVIDIA H20, <REDACTED-GPU-UUID>, 97871 MiB, 97357 MiB, 580.105.08, P0, 33, 500.00 W
+2, NVIDIA H20, <REDACTED-GPU-UUID>, 97871 MiB, 97357 MiB, 580.105.08, P0, 31, 500.00 W
+3, NVIDIA H20, <REDACTED-GPU-UUID>, 97871 MiB, 97357 MiB, 580.105.08, P0, 34, 500.00 W
+===== GPU TOPOLOGY =====
+	[4mGPU0	GPU1	GPU2	GPU3	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NV18	NV18	NV18	0-63	0		N/A
+GPU1	NV18	 X 	NV18	NV18	0-63	0		N/A
+GPU2	NV18	NV18	 X 	NV18	64-127	1		N/A
+GPU3	NV18	NV18	NV18	 X 	64-127	1		N/A
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+===== NVLINK =====
+GPU 0: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+	 Link 0: 26.562 GB/s
+	 Link 1: 26.562 GB/s
+	 Link 2: 26.562 GB/s
+	 Link 3: 26.562 GB/s
+	 Link 4: 26.562 GB/s
+	 Link 5: 26.562 GB/s
+	 Link 6: 26.562 GB/s
+	 Link 7: 26.562 GB/s
+	 Link 8: 26.562 GB/s
+	 Link 9: 26.562 GB/s
+	 Link 10: 26.562 GB/s
+	 Link 11: 26.562 GB/s
+	 Link 12: 26.562 GB/s
+	 Link 13: 26.562 GB/s
+	 Link 14: 26.562 GB/s
+	 Link 15: 26.562 GB/s
+	 Link 16: 26.562 GB/s
+	 Link 17: 26.562 GB/s
+GPU 1: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+	 Link 0: 26.562 GB/s
+	 Link 1: 26.562 GB/s
+	 Link 2: 26.562 GB/s
+	 Link 3: 26.562 GB/s
+	 Link 4: 26.562 GB/s
+	 Link 5: 26.562 GB/s
+	 Link 6: 26.562 GB/s
+	 Link 7: 26.562 GB/s
+	 Link 8: 26.562 GB/s
+	 Link 9: 26.562 GB/s
+	 Link 10: 26.562 GB/s
+	 Link 11: 26.562 GB/s
+	 Link 12: 26.562 GB/s
+	 Link 13: 26.562 GB/s
+	 Link 14: 26.562 GB/s
+	 Link 15: 26.562 GB/s
+	 Link 16: 26.562 GB/s
+	 Link 17: 26.562 GB/s
+GPU 2: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+	 Link 0: 26.562 GB/s
+	 Link 1: 26.562 GB/s
+	 Link 2: 26.562 GB/s
+	 Link 3: 26.562 GB/s
+	 Link 4: 26.562 GB/s
+	 Link 5: 26.562 GB/s
+	 Link 6: 26.562 GB/s
+	 Link 7: 26.562 GB/s
+	 Link 8: 26.562 GB/s
+	 Link 9: 26.562 GB/s
+	 Link 10: 26.562 GB/s
+	 Link 11: 26.562 GB/s
+	 Link 12: 26.562 GB/s
+	 Link 13: 26.562 GB/s
+	 Link 14: 26.562 GB/s
+	 Link 15: 26.562 GB/s
+	 Link 16: 26.562 GB/s
+	 Link 17: 26.562 GB/s
+GPU 3: NVIDIA H20 (UUID: <REDACTED-GPU-UUID>)
+	 Link 0: 26.562 GB/s
+	 Link 1: 26.562 GB/s
+	 Link 2: 26.562 GB/s
+	 Link 3: 26.562 GB/s
+	 Link 4: 26.562 GB/s
+	 Link 5: 26.562 GB/s
+	 Link 6: 26.562 GB/s
+	 Link 7: 26.562 GB/s
+	 Link 8: 26.562 GB/s
+	 Link 9: 26.562 GB/s
+	 Link 10: 26.562 GB/s
+	 Link 11: 26.562 GB/s
+	 Link 12: 26.562 GB/s
+	 Link 13: 26.562 GB/s
+	 Link 14: 26.562 GB/s
+	 Link 15: 26.562 GB/s
+	 Link 16: 26.562 GB/s
+	 Link 17: 26.562 GB/s
+===== CPU =====
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        52 bits physical, 48 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               128
+On-line CPU(s) list:                  0-127
+Vendor ID:                            AuthenticAMD
+Model name:                           AMD EPYC 9K84 96-Core Processor
+CPU family:                           25
+Model:                                17
+Thread(s) per core:                   2
+Core(s) per socket:                   32
+Socket(s):                            2
+Stepping:                             0
+BogoMIPS:                             5200.05
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid amd_dcm tsc_known_freq pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext perfctr_core invpcid_single ibpb vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 avx512_bf16 clzero xsaveerptr wbnoinvd arat avx512vbmi umip avx512_vbmi2 vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm
+Hypervisor vendor:                    KVM
+Virtualization type:                  full
+L1d cache:                            2 MiB (64 instances)
+L1i cache:                            2 MiB (64 instances)
+L2 cache:                             64 MiB (64 instances)
+L3 cache:                             256 MiB (8 instances)
+NUMA node(s):                         2
+NUMA node0 CPU(s):                    0-63
+NUMA node1 CPU(s):                    64-127
+Vulnerability Gather data sampling:   Not affected
+Vulnerability Itlb multihit:          Not affected
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Not affected
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Not affected
+Vulnerability Spec rstack overflow:   Mitigation; safe RET, no microcode
+Vulnerability Spec store bypass:      Vulnerable
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; Retpolines; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Not affected
+===== MEMORY =====
+               total        used        free      shared  buff/cache   available
+Mem:           1.2Ti        47Gi       229Gi       956Mi       962Gi       1.2Ti
+Swap:             0B          0B          0B
+===== NUMA =====
+bash: numactl: command not found
+===== STORAGE =====
+Filesystem     Type       Size  Used Avail Use% Mounted on
+overlay        overlay     30G   53M   30G   1% /
+/dev/vdb       xfs        8.8T  7.2T  1.7T  82% /autodl-pub
+adfs:/quota-1  fuse.adfs   10T  4.4T  5.7T  44% /autodl-pub/data
+tmpfs          tmpfs       64M     0   64M   0% /dev
+shm            tmpfs      300G     0  300G   0% /dev/shm
+/dev/vda2      ext4       788G  8.3G  747G   2% /usr/bin/nvidia-smi
+tmpfs          tmpfs      620G   12K  620G   1% /proc/driver/nvidia
+tmpfs          tmpfs      620G  4.0K  620G   1% /etc/nvidia/nvidia-application-profiles-rc.d
+tmpfs          tmpfs      124G  3.2M  124G   1% /run/nvidia-persistenced/socket
+tmpfs          tmpfs      620G     0  620G   0% /proc/asound
+tmpfs          tmpfs      620G     0  620G   0% /proc/acpi
+tmpfs          tmpfs      620G     0  620G   0% /proc/scsi
+tmpfs          tmpfs      620G     0  620G   0% /sys/firmware
+tmpfs          tmpfs      620G     0  620G   0% /sys/devices/virtual/powercap
+Filesystem        Inodes    IUsed     IFree IUse% Mounted on
+overlay        943718400 21440170 922278230    3% /
+/dev/vdb       943718400 21440170 922278230    3% /autodl-pub
+adfs:/quota-1     600000    17499    582501    3% /autodl-pub/data
+tmpfs          162452609       41 162452568    1% /dev
+shm            162452609        1 162452608    1% /dev/shm
+/dev/vda2       52428800   103917  52324883    1% /usr/bin/nvidia-smi
+tmpfs          162452609        9 162452600    1% /proc/driver/nvidia
+tmpfs          162452609        2 162452607    1% /etc/nvidia/nvidia-application-profiles-rc.d
+tmpfs          162452609     1476 162451133    1% /run/nvidia-persistenced/socket
+tmpfs          162452609        1 162452608    1% /proc/asound
+tmpfs          162452609        1 162452608    1% /proc/acpi
+tmpfs          162452609        1 162452608    1% /proc/scsi
+tmpfs          162452609        1 162452608    1% /sys/firmware
+tmpfs          162452609        1 162452608    1% /sys/devices/virtual/powercap
+NAME    SIZE FSTYPE MOUNTPOINTS                                                       MODEL
+sr0     227M                                                                          QEMU DVD-ROM    
+vda     800G                                                                          
+├─vda1    1M                                                                          
+└─vda2  800G        /usr/lib/firmware/nvidia/580.105.08/gsp_tu10x.bin                 
+                    /usr/lib/firmware/nvidia/580.105.08/gsp_ga10x.bin                 
+                    /usr/lib/x86_64-linux-gnu/libnvidia-glvkspirv.so.580.105.08       
+                    /usr/lib/x86_64-linux-gnu/libGLESv1_CM_nvidia.so.580.105.08       
+                    /usr/lib/x86_64-linux-gnu/libGLESv2_nvidia.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libEGL_nvidia.so.580.105.08             
+                    /usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.580.105.08             
+                    /usr/lib/x86_64-linux-gnu/libnvoptix.so.580.105.08                
+                    /usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libnvidia-fbc.so.580.105.08             
+                    /usr/lib/x86_64-linux-gnu/libnvidia-glsi.so.580.105.08            
+                    /usr/lib/x86_64-linux-gnu/libnvidia-tls.so.580.105.08             
+                    /usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libnvidia-eglcore.so.580.105.08         
+                    /usr/lib/x86_64-linux-gnu/libnvcuvid.so.580.105.08                
+                    /usr/lib/x86_64-linux-gnu/libnvidia-opticalflow.so.580.105.08     
+                    /usr/lib/x86_64-linux-gnu/libnvidia-encode.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.580.105.08           
+                    /usr/lib/x86_64-linux-gnu/libnvidia-nvvm.so.580.105.08            
+                    /usr/lib/x86_64-linux-gnu/libnvidia-pkcs11-openssl3.so.580.105.08 
+                    /usr/lib/x86_64-linux-gnu/libnvidia-pkcs11.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.580.105.08       
+                    /usr/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.580.105.08  
+                    /usr/lib/x86_64-linux-gnu/libnvidia-gpucomp.so.580.105.08         
+                    /usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.580.105.08          
+                    /usr/lib/x86_64-linux-gnu/libcudadebugger.so.580.105.08           
+                    /usr/lib/x86_64-linux-gnu/libcuda.so.580.105.08                   
+                    /usr/lib/x86_64-linux-gnu/libnvidia-cfg.so.580.105.08             
+                    /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.105.08              
+                    /usr/bin/nvidia-cuda-mps-server                                   
+                    /usr/bin/nvidia-cuda-mps-control                                  
+                    /usr/bin/nvidia-persistenced                                      
+                    /usr/bin/nvidia-debugdump                                         
+                    /usr/bin/nvidia-smi                                               
+                    /usr/share/glvnd/egl_vendor.d/10_nvidia.json                      
+                    /usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json         
+                    /usr/share/egl/egl_external_platform.d/10_nvidia_wayland.json     
+                    /etc/vulkan/implicit_layer.d/nvidia_layers.json                   
+                    /etc/vulkan/icd.d/nvidia_icd.json                                 
+                    /usr/lib/x86_64-linux-gnu/libnvidia-egl-gbm.so.1.1.2              
+vdb     8.8T        /etc/hostname                                                     
+                    /etc/resolv.conf                                                  
+                    /root/autodl-tmp                                                  
+                    /etc/resolv.conf                                                  
+                    /etc/hosts                                                        
+                    /etc/hostname                                                     
+                    /init                                                             
+                    /autodl-pub                                                       
+vdc    1000G                                                                          
+===== SHARED MEMORY =====
+Filesystem      Size  Used Avail Use% Mounted on
+shm             300G     0  300G   0% /dev/shm
+===== ULIMIT =====
+real-time non-blocking time  (microseconds, -R) unlimited
+core file size              (blocks, -c) unlimited
+data seg size               (kbytes, -d) unlimited
+scheduling priority                 (-e) 0
+file size                   (blocks, -f) unlimited
+pending signals                     (-i) 5076188
+max locked memory           (kbytes, -l) unlimited
+max memory size             (kbytes, -m) unlimited
+open files                          (-n) 1048576
+pipe size                (512 bytes, -p) 8
+POSIX message queues         (bytes, -q) 819200
+real-time priority                  (-r) 0
+stack size                  (kbytes, -s) 8192
+cpu time                   (seconds, -t) unlimited
+max user processes                  (-u) unlimited
+virtual memory              (kbytes, -v) unlimited
+file locks                          (-x) unlimited
+===== PYTHON / CUDA / TORCH =====
+Python: 3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]
+PyTorch: 2.8.0+cu128
+torch CUDA: 12.8
+CUDA available: True
+GPU count: 4
+0 NVIDIA H20 95.07 GB CC=9.0
+1 NVIDIA H20 95.07 GB CC=9.0
+2 NVIDIA H20 95.07 GB CC=9.0
+3 NVIDIA H20 95.07 GB CC=9.0
+BF16 matmul: PASS torch.Size([4096, 4096])
+===== NCCL ALL-REDUCE TEST =====
+rank=0, gpu=0, world=4, result=10.0, expected=10.0rank=3, gpu=3, world=4, result=10.0, expected=10.0rank=1, gpu=1, world=4, result=10.0, expected=10.0
+
+
+rank=2, gpu=2, world=4, result=10.0, expected=10.0
+/root/miniconda3/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+/root/miniconda3/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+/root/miniconda3/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+/root/miniconda3/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+world_size=4  torch=2.8.0+cu128  nccl=2.27.3
+      size  iters     avg_ms   algBW_GB/s   busBW_GB/s  max_rank_ms  spread_%
+      64MB     25      0.325       206.29       309.43        0.326      0.25
+     256MB     25      1.214       221.20       331.79        1.214      0.07
+    1024MB     25      4.587       234.09       351.13        4.587      0.01
+
+Reference: H20 NVLink busBW is expected in the ~200-400 GB/s band at 1GB.
+Anything in the single-digit GB/s range means NVLink is NOT being used.

@@ -1,0 +1,81 @@
+# ============ operational dirs (large / machine-local, never committed) ============
+repos/
+models/
+checkpoints/
+cache/
+tmp/
+wandb/
+runs/*/ckpt/
+runs/*/rollout_dumps/
+system/
+env.sh
+
+# ============ models / checkpoints ============
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.gguf
+
+# ============ HuggingFace / caches ============
+.huggingface/
+**/.cache/
+ray/
+.ray/
+
+# ============ datasets ============
+data/
+data/raw/
+*.parquet
+*.arrow
+
+# ============ large logs ============
+logs/
+*.log
+*.out
+nohup.out
+
+# ============ python ============
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# ============ IDE ============
+.vscode/
+.idea/
+
+# ============ secrets ============
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.pub
+.netrc
+.git-credentials
+
+# ============ archives ============
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# ============ explicitly KEEP (small text artifacts) ============
+!analysis/**/*.md
+!analysis/**/*.csv
+!analysis/**/*.jsonl
+!experiments/**/*.md
+!experiments/**/*.yaml
+!experiments/**/*.csv
+!experiments/**/*.jsonl
+!configs/**
+!scripts/**
+!manifests/**
+!figures/**/*.png
+!figures/**/*.pdf
+!docs/**
