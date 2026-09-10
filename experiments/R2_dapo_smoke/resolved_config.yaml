@@ -962,7 +962,7 @@ trainer:
   - console
   - file
   log_val_generations: 0
-  rollout_data_dir: /root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-170251/rollout_dump
+  rollout_data_dir: /root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-170443/rollout_dump
   validation_data_dir: null
   nnodes: 1
   n_gpus_per_node: 4

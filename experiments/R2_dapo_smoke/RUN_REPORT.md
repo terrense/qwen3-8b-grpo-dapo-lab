@@ -1,10 +1,10 @@
 # Run Report — R2_dapo_smoke
 
-**Run UID:** `R2_dapo_smoke-20260910-170251`
+**Run UID:** `R2_dapo_smoke-20260910-170443`
 **Outcome:** **FAILED (exit 1)**
 **Duration:** 0.3 min
 **Optimizer updates recorded:** 0
-**Generated:** 2026-09-10T17:03:07
+**Generated:** 2026-09-10T17:05:00
 
 ## Configuration
 
@@ -14,9 +14,9 @@
 | Model | Qwen/Qwen3-8B |
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
 | VeRL commit | `1252cc71aa5bd82e5604322064d69bfe6454c660` |
-| Lab commit at start | `f98e46cc660f5739f890401612d770d6eddd4d62` |
+| Lab commit at start | `7ff8aee98541fb12a632eafab03683c60c62f44d` |
 | Seed | 20260910 |
-| Started | 2026-09-10T17:02:51 |
+| Started | 2026-09-10T17:04:43 |
 | Exit code | `1` |
 
 Launch command: `command.txt`. When present, `launch_overrides.json` records overrides extracted from the actual trainer log; it is not a full resolved configuration. Check `resolved_config.yaml` before treating it as evidence (R1 originally contained only a placeholder).

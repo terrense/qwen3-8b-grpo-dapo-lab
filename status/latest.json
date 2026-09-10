@@ -1,12 +1,12 @@
 {
   "run_id": "R2_dapo_smoke",
-  "run_uid": "R2_dapo_smoke-20260910-170251",
+  "run_uid": "R2_dapo_smoke-20260910-170443",
   "algorithm": "DAPO",
   "model": "Qwen/Qwen3-8B",
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
   "current_step": null,
   "updates_recorded": 0,
-  "elapsed_s": 5.7,
+  "elapsed_s": 6.6,
   "health": "GREEN",
   "reward_mean": null,
   "kl": null,
@@ -38,6 +38,6 @@
   "n_incidents": 0,
   "latest_incident": null,
   "last_checkpoint": null,
-  "git_commit": "39402c2",
-  "updated": "2026-09-10T17:02:56"
+  "git_commit": "2e3160a",
+  "updated": "2026-09-10T17:04:49"
 }
