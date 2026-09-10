@@ -33,7 +33,7 @@ flowchart LR
 ## 1. Clip-Higher — asymmetric trust region
 
 $$
-\min\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}\big(\rho_{i,t},\,1-\epsilon_{\text{low}},\,1+\epsilon_{\text{high}}\big)\hat A_i\Big),
+\min\Big(\rho_{i,t}\hat A_i,\ \mathrm{clip}\big(\rho_{i,t},\,1-\epsilon_{\text{low}},\,1+\epsilon_{\text{high}}\big)\hat A_i\Big),
 \qquad \epsilon_{\text{low}}=0.2,\ \ \epsilon_{\text{high}}=0.28
 $$
 
@@ -59,7 +59,7 @@ $$
 0<\Big|\{\,i:\ r_i=1\,\}\Big|<G
 $$
 
-Unanimous groups have $\operatorname{std}(\mathbf r)=0$, hence $\hat A_i\equiv 0$ and **zero
+Unanimous groups have $\mathrm{std}(\mathbf r)=0$, hence $\hat A_i\equiv 0$ and **zero
 gradient**. DAPO discards them and regenerates, up to `max_num_gen_batches=10` attempts, so
 the *nominal* batch and the *effective* batch coincide.
 

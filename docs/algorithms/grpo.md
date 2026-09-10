@@ -13,7 +13,7 @@ Implementation in this checkout: `verl/trainer/ppo/core_algos.py:272-322`
 For prompt $x$, sample a group of $G$ responses $\{y_1,\dots,y_G\}$ from $\pi_{\theta_{\text{old}}}$:
 
 $$
-\mathcal{J}_{\text{GRPO}}(\theta)=\mathbb{E}_{x,\{y_i\}}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\min\Big(\rho_{i,t}(\theta)\,\hat{A}_i,\ \operatorname{clip}\big(\rho_{i,t}(\theta),1-\epsilon,1+\epsilon\big)\hat{A}_i\Big)\right]
+\mathcal{J}_{\text{GRPO}}(\theta)=\mathbb{E}_{x,\{y_i\}}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\min\Big(\rho_{i,t}(\theta)\,\hat{A}_i,\ \mathrm{clip}\big(\rho_{i,t}(\theta),1-\epsilon,1+\epsilon\big)\hat{A}_i\Big)\right]
 $$
 
 with the **token-level** importance ratio
@@ -25,7 +25,7 @@ $$
 and the **group-normalised outcome advantage**, identical for every token of a response:
 
 $$
-\hat{A}_i=\frac{r_i-\operatorname{mean}(\mathbf{r})}{\operatorname{std}(\mathbf{r})+\varepsilon},\qquad \mathbf{r}=(r_1,\dots,r_G),\ \varepsilon=10^{-6}
+\hat{A}_i=\frac{r_i-\mathrm{mean}(\mathbf{r})}{\mathrm{std}(\mathbf{r})+\varepsilon},\qquad \mathbf{r}=(r_1,\dots,r_G),\ \varepsilon=10^{-6}
 $$
 
 ---
@@ -67,7 +67,7 @@ $k\in\{1,3\}$ row exactly, including the $\varepsilon$ offset. The pipeline arit
 1. A $\sqrt{3}\approx 1.73\times$ difference in gradient magnitude arises purely from *how many
    samples happened to be correct* — i.e. from group composition, not from learning signal.
    This is the term **Dr.GRPO** argues is a bias.
-2. When all samples agree, $\operatorname{std}=0$ and $r_i-\operatorname{mean}=0$, so
+2. When all samples agree, $\mathrm{std}=0$ and $r_i-\mathrm{mean}=0$, so
    $\hat{A}_i=0/\varepsilon=0$: **that prompt contributes no gradient at all**. Not a weak
    push — silence. This is what **DAPO's dynamic sampling** attacks.
 

@@ -28,9 +28,9 @@ independently, not toggled together.
 GRPO divides by the group standard deviation:
 
 $$
-\hat{A}^{\text{GRPO}}_i=\frac{r_i-\operatorname{mean}(\mathbf{r})}{\operatorname{std}(\mathbf{r})+\varepsilon}
+\hat{A}^{\text{GRPO}}_i=\frac{r_i-\mathrm{mean}(\mathbf{r})}{\mathrm{std}(\mathbf{r})+\varepsilon}
 \qquad\longrightarrow\qquad
-\hat{A}^{\text{Dr}}_i=r_i-\operatorname{mean}(\mathbf{r})
+\hat{A}^{\text{Dr}}_i=r_i-\mathrm{mean}(\mathbf{r})
 $$
 
 With binary rewards the std is a **deterministic function of how many samples were correct**,

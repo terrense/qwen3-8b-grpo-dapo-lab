@@ -35,7 +35,7 @@ $$
 Objective:
 
 $$
-\mathcal{J}_{\text{GSPO}}(\theta)=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\min\Big(s_i(\theta)\hat A_i,\ \operatorname{clip}\big(s_i(\theta),1-\epsilon,1+\epsilon\big)\hat A_i\Big)\right]
+\mathcal{J}_{\text{GSPO}}(\theta)=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\min\Big(s_i(\theta)\hat A_i,\ \mathrm{clip}\big(s_i(\theta),1-\epsilon,1+\epsilon\big)\hat A_i\Big)\right]
 $$
 
 **Clipping now accepts or rejects a whole sequence**, not individual tokens.
@@ -75,11 +75,11 @@ seq_importance_ratio = torch.exp(log_seq_importance_ratio)
 which is
 
 $$
-s_{i,t}(\theta)=\operatorname{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\operatorname{sg}\big[\pi_\theta(y_{i,t}\mid x,y_{i,<t})\big]}
+s_{i,t}(\theta)=\mathrm{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\mathrm{sg}\big[\pi_\theta(y_{i,t}\mid x,y_{i,<t})\big]}
 $$
 
 In the forward pass the two $\pi_\theta$ terms cancel, so the **value** is exactly $s_i$ — the
-sequence ratio. In the backward pass $\operatorname{sg}[\cdot]$ contributes nothing, so the
+sequence ratio. In the backward pass $\mathrm{sg}[\cdot]$ contributes nothing, so the
 **gradient** flows through the live per-token $\log\pi_\theta$. Sequence-level magnitude,
 token-level gradient path.
 

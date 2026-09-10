@@ -1,8 +1,10 @@
 <div align="center">
 
-# Qwen3-8B GRPO / DAPO Systems Lab
+# Qwen3-8B RL Systems Lab
 
-### An instrumented RLVR study of policy optimization, rollout dynamics, and failure modes
+### Five policy-optimization algorithms under one instrumented pipeline
+
+#### *because a reward curve is not ground truth*
 
 [![Model](https://img.shields.io/badge/model-Qwen3--8B-1f6feb?style=flat-square&logo=huggingface&logoColor=white)](https://huggingface.co/Qwen/Qwen3-8B)
 [![Framework](https://img.shields.io/badge/framework-VeRL%20@1252cc71-6f42c1?style=flat-square)](https://github.com/verl-project/verl)
@@ -173,9 +175,9 @@ flowchart TB
 Token-level ratio, group-normalised outcome advantage broadcast to every token:
 
 $$
-\mathcal{J}_{\text{GRPO}}=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\min\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\Big)\right],
+\mathcal{J}_{\text{GRPO}}=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\min\Big(\rho_{i,t}\hat A_i,\ \mathrm{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\Big)\right],
 \qquad
-\hat A_i=\frac{r_i-\operatorname{mean}(\mathbf r)}{\operatorname{std}(\mathbf r)+\varepsilon}
+\hat A_i=\frac{r_i-\mathrm{mean}(\mathbf r)}{\mathrm{std}(\mathbf r)+\varepsilon}
 $$
 
 **Measured here:** verl uses the *unbiased* $(n{-}1)$ std, which makes the advantage extrema a
@@ -188,7 +190,7 @@ $$
 \lvert\hat A\rvert_{k=3}=\frac{1.25}{1.0351}=1.2076
 $$
 
-When a group is unanimous, $\operatorname{std}=0$ **and** $r_i-\operatorname{mean}=0$, so
+When a group is unanimous, $\mathrm{std}=0$ **and** $r_i-\mathrm{mean}=0$, so
 $\hat A_i=0$ — that prompt contributes *no gradient at all*. Tracked as
 `effective_signal_fraction`; R1 measured **63.75%** overall.
 
@@ -197,7 +199,7 @@ $\hat A_i=0$ — that prompt contributes *no gradient at all*. Tracked as
 Removes **two** biases independently, so it is one experiment with two falsifiable claims:
 
 $$
-\underbrace{\hat A_i=\frac{r_i-\operatorname{mean}(\mathbf r)}{\operatorname{std}(\mathbf r)+\varepsilon}\ \longrightarrow\ r_i-\operatorname{mean}(\mathbf r)}_{\text{bias 1: difficulty re-weighting}}
+\underbrace{\hat A_i=\frac{r_i-\mathrm{mean}(\mathbf r)}{\mathrm{std}(\mathbf r)+\varepsilon}\ \longrightarrow\ r_i-\mathrm{mean}(\mathbf r)}_{\text{bias 1: difficulty re-weighting}}
 \qquad
 \underbrace{\frac{1}{\lvert y_i\rvert}\sum_t \ell_{i,t}\ \longrightarrow\ \frac{1}{C}\sum_t \ell_{i,t}}_{\text{bias 2: length}}
 $$
@@ -211,7 +213,7 @@ gradient. A constant divisor $C$ removes the incentive.
 Four mechanisms. Asymmetric clipping, so low-probability tokens get absolute headroom:
 
 $$
-\min\Big(\rho\hat A,\ \operatorname{clip}\big(\rho,1-\epsilon_{\text{low}},1+\epsilon_{\text{high}}\big)\hat A\Big),\qquad \epsilon_{\text{low}}=0.2,\ \epsilon_{\text{high}}=0.28
+\min\Big(\rho\hat A,\ \mathrm{clip}\big(\rho,1-\epsilon_{\text{low}},1+\epsilon_{\text{high}}\big)\hat A\Big),\qquad \epsilon_{\text{low}}=0.2,\ \epsilon_{\text{high}}=0.28
 $$
 
 Dynamic sampling keeps only groups that actually carry signal, $0<\lvert\{i:r_i=1\}\rvert<G$,
@@ -236,7 +238,7 @@ verl implements it natively (`core_algos.py:1546`) with a stop-gradient identity
 *value* is the sequence ratio while the *gradient* still flows per token:
 
 $$
-s_{i,t}(\theta)=\operatorname{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t})}{\operatorname{sg}\big[\pi_\theta(y_{i,t})\big]}
+s_{i,t}(\theta)=\mathrm{sg}\big[s_i(\theta)\big]\cdot\frac{\pi_\theta(y_{i,t})}{\mathrm{sg}\big[\pi_\theta(y_{i,t})\big]}
 $$
 
 > **Prerequisite, established by measurement.** R0 ran $\rho\equiv1$ exactly
@@ -389,6 +391,13 @@ others are instrumented.
 
 ---
 
+> **踩过的每一个坑都记在 [`analysis/BUG_LOG.md`](analysis/BUG_LOG.md) 里。**
+> 20 条，按踩到的顺序。里面一半以上的坑，报错信息指的地方跟真正的问题不是一回事 ——
+> `flash-attn` 装不上其实是网络路由，`MPClient` 崩了其实是我自己的 TypeError，
+> 「模型很差」其实是长度上限。
+
+---
+
 ## Reproducibility Contract
 
 Every run records: run id, VeRL commit, model revision, dataset SHA, seed, fully resolved
@@ -425,6 +434,7 @@ scripts/
   training/                 run_with_observer.sh, per-run launchers
 configs/                    grpo · dr_grpo · dapo · gspo · vapo · failure_injection
 analysis/                   source traces, verifier reports, incident log, gate reports
+  BUG_LOG.md                踩坑记录 —— 所有踩过的坑，按顺序，口语流水账
 experiments/<RUN_ID>/       telemetry, metrics, trajectories, incidents, figures,
                             run_manifest.json, RUN_REPORT.md
 manifests/                  hardware, versions, dataset, model, pip freeze
@@ -444,3 +454,50 @@ status/                     live run status
 
 This lab reproduces official implementations rather than reimplementing them; any
 deviation is documented and justified in `analysis/`.
+
+---
+
+<div align="center">
+
+## 关于作者
+
+</div>
+
+<table>
+<tr>
+<td width="120" align="center">
+<a href="https://github.com/terrense">
+<img src="https://github.com/terrense.png" width="96" height="96" style="border-radius:50%" alt="terrense"/>
+</a>
+</td>
+<td>
+
+### **terrense** &nbsp;·&nbsp; [![GitHub](https://img.shields.io/badge/GitHub-terrense-181717?style=flat-square&logo=github)](https://github.com/terrense)
+
+这个仓库的作者和唯一维护者。
+
+**在做的方向** —— 大模型强化学习的系统工程与失败分析，以及机器人/农业场景的仿真与控制。
+
+这个 lab 的来历：正在写的医学方向论文需要一条完整的
+`Qwen3-8B → SFT (M1) → DPO (M2) → GRPO (M3)` 后训练链路。在正式跑 M3 之前，
+我想先把 GRPO 这一环的**系统行为**彻底搞明白 —— 所以有了这个仓库。
+它是那条链路的预演，不是论文里的正式实验。
+
+真正想解决的问题不是"怎么把 reward 调高"，而是：
+
+> **当一次 RL 训练变好、卡住或者崩掉的时候，我能不能从 rollout、reward、
+> 策略更新和系统信号里，把原因说清楚。**
+
+这个问题在这个项目里被验证过一次，代价很小但很典型：预训练前的 rollout 显示
+reward −0.746、准确率 12.7%，看着就是模型不行 —— 结果 512 条里只有 2 条是真答错，
+87% 是被长度上限截断的。同一份权重，只把长度预算放开，准确率直接到 56.25%。
+
+从那以后，这个仓库里所有结论都必须能追到具体的 step、metric、源码行号或者
+[踩坑记录](analysis/BUG_LOG.md)里的某一条。
+
+</td>
+</tr>
+</table>
+
+**联系** —— 有问题或者想讨论，直接开 [issue](https://github.com/terrense/qwen3-8b-grpo-dapo-lab/issues)。
+

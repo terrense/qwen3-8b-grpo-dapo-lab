@@ -49,7 +49,7 @@ Contrast with the group-based estimator, where **every token of response $i$ sha
 scalar**:
 
 $$
-\hat A_{i,t}^{\text{GRPO}} = \frac{r_i - \operatorname{mean}(\mathbf r)}{\operatorname{std}(\mathbf r)+\varepsilon}
+\hat A_{i,t}^{\text{GRPO}} = \frac{r_i - \mathrm{mean}(\mathbf r)}{\mathrm{std}(\mathbf r)+\varepsilon}
 \quad \text{for all } t
 $$
 
