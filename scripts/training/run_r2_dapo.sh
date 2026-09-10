@@ -70,12 +70,18 @@ mkdir -p "$DUMP_DIR"
 # "Could not load ppo_trainer". So: cd to the verl root and invoke the recipe
 # entry point by absolute path (hydra resolves config_path="config" relative to
 # main_dapo.py itself, so the recipe own config is still found).
+#
+# ALSO: invoking the recipe by ABSOLUTE PATH from inside the uv project made
+# Ray's uv runtime-env hook die with "path_or_uri must be a string, got NoneType"
+# -- it could not locate the script within the project. Upstream runs
+# `python3 -m recipe.dapo.main_dapo`, so repos/verl/recipe/dapo is symlinked to
+# the recipe checkout and we use the module form, exactly as upstream does.
 cd "$LAB/repos/verl"
 
 LAUNCH=(uv run --frozen --all-packages --extra vllm --extra fsdp python3)
 RAY=(ray_kwargs.ray_init.runtime_env.py_executable="uv -v run --frozen --all-packages --extra vllm --extra fsdp")
 
-"${LAUNCH[@]}" "$RECIPE/main_dapo.py" \
+"${LAUNCH[@]}" -m recipe.dapo.main_dapo \
     algorithm.adv_estimator=grpo \
     algorithm.use_kl_in_reward=False \
     algorithm.kl_ctrl.kl_coef=0.0 \
