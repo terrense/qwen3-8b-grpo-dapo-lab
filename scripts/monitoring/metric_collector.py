@@ -92,6 +92,20 @@ DIRECT_MAP = {
     "actor_reserved_mem_gb": "actor/perf/max_memory_reserved_gb",
     "mfu_actor": "perf/mfu/actor",
     "kl_loss": "actor/kl_loss",
+    # ---- value-function arms (PPO/GAE, and VAPO if it is ever implemented) ----
+    # These stay UNAVAILABLE for critic-free algorithms, which is the correct
+    # reading: the quantity does not exist, it is not zero.
+    "value_mean": "critic/values/mean",
+    "value_max": "critic/values/max",
+    "value_min": "critic/values/min",
+    "returns_mean": "critic/returns/mean",
+    "returns_max": "critic/returns/max",
+    "returns_min": "critic/returns/min",
+    "explained_variance": "critic/vf_explained_var",
+    "value_loss": "critic/vf_loss",
+    "value_clip_fraction": "critic/vf_clipfrac",
+    "t_critic_update": "timing_s/update_critic",
+    "t_values": "timing_s/values",
 }
 
 TIMING_FIELDS = ["t_rollout", "t_old_logprob", "t_ref_logprob", "t_values", "t_adv",
@@ -128,6 +142,16 @@ CSV_COLUMNS = [
     "actor_reserved_mem_gb",
     "mfu_actor",
     "kl_loss",
+    "value_mean",
+    "value_max",
+    "value_min",
+    "returns_mean",
+    "returns_max",
+    "returns_min",
+    "explained_variance",
+    "value_loss",
+    "value_clip_fraction",
+    "t_critic_update",
     "peak_vram_gpu0", "peak_vram_gpu1", "peak_vram_gpu2", "peak_vram_gpu3",
 ]
 
