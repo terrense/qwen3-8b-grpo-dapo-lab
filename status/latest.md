@@ -1,16 +1,16 @@
 # Live Run Status
 
-_Updated 2026-09-10T17:01:21 · health **GREEN**_
+_Updated 2026-09-10T17:02:56 · health **GREEN**_
 
 | | |
 |---|---|
-| Run | `R2_dapo_smoke` (`R2_dapo_smoke-20260910-170116`) |
+| Run | `R2_dapo_smoke` (`R2_dapo_smoke-20260910-170251`) |
 | Algorithm | DAPO |
 | Model | Qwen/Qwen3-8B |
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
 | Current optimizer step | **None** |
 | Updates recorded | 0 |
-| Elapsed | 5 s |
+| Elapsed | 6 s |
 | Health | **GREEN** |
 
 ## Latest update
@@ -41,7 +41,7 @@ disk / : 1.27%   disk data: 3.06%
 0 recorded. Latest: `none`
 
 Last checkpoint: `none`
-Git commit: `cdf3242`
+Git commit: `39402c2`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._

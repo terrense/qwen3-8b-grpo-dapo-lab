@@ -21,5 +21,9 @@
   "vllm": "0.24.0",
   "trainer_log": "/root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-170251/trainer.log",
   "rollout_dump_dir": "/root/autodl-tmp/rl_lab/logs/R2_dapo_smoke-20260910-170251/rollout_dump",
-  "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint."
+  "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint.",
+  "end_ts": 1789030987.4131155,
+  "report_generated_ts": 1789030987.4131165,
+  "exit_code": 1,
+  "updates_recorded": 0
 }
