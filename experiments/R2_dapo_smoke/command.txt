@@ -1,0 +1,1 @@
+bash /root/autodl-tmp/rl_lab/scripts/training/run_r2_dapo.sh 
