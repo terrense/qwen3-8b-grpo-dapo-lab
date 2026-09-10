@@ -300,3 +300,84 @@ Two lessons, and the second is the more general one:
    silently a no-op, because `--frozen` bypasses resolution. Two attempts were spent on it before
    the socket dump settled the question. Guessing at configuration is slower than measuring what a
    process is actually connected to.
+
+---
+
+## INC-004 — probe crashed in scoring *after* the expensive arm had generated
+
+**Date / stage:** 2026-09-10, pre-R0 length-budget probe.
+**Run / step:** n/a — diagnostic tooling, not training.
+
+### Observed symptom
+
+The length-budget probe ran arm A (thinking mode, `max_response_length=16384`) to
+completion on the GPU — roughly 12 minutes of H20 time at 100% utilization — and then
+died before writing a single result:
+
+```
+Traceback (most recent call last):
+  File ".../length_budget_probe.py", line 89, in main
+    row = dict(n_tokens=len(c.token_ids), truncated=trunc,
+TypeError: dict() got multiple values for keyword argument 'state'
+WARNING [core_client.py:702] [shutdown] MPClient: engine core exited unexpectedly
+```
+
+### Hypotheses
+
+1. vLLM engine crash / OOM at the 16384 context (the `MPClient` shutdown warning is the
+   most visually alarming line in the log).
+2. A bug in the probe's own scoring code.
+
+### Evidence checked
+
+- The traceback is a plain `TypeError` in **our** script, above the vLLM shutdown line.
+  The `MPClient: engine core exited unexpectedly` message is the *consequence* of the
+  parent process dying, not the cause — engine teardown follows the crash.
+- No `CUDA out of memory`, no OOM killer entry.
+- GPU had been sitting at 100% / 460 W with 90.5 GiB in use and had produced output
+  normally right up to the end.
+
+Hypothesis 1 is dead: the scary infrastructure-looking line was downstream of an
+ordinary application bug.
+
+### Root cause
+
+`score()` returns a dict that already contains a `state` key. The row builder did
+`dict(..., state=<derived>, **s)`, so `state` was supplied twice — once explicitly and
+once via `**s`. Python rejects that at call time. The failure was unconditional and
+would have fired on the very first scored sample.
+
+### Fix
+
+Pop the key before splatting:
+
+```python
+s = dict(score(c.text, gt))
+base_state = s.pop("state")          # avoid duplicate kwarg with **s
+row = dict(n_tokens=..., truncated=trunc,
+           state="TRUNCATED" if trunc and base_state == "PARSE_FAILURE" else base_state,
+           **s)
+```
+
+and, more importantly, added a `_selftest()` that exercises the scoring + row-building
+path on two synthetic samples **before** the model is loaded or any token is generated.
+
+### Post-fix evidence
+
+Relaunch printed `[selftest] scoring/row path OK` within seconds of start, before vLLM
+initialisation.
+
+### Lesson
+
+Two, and the second is the expensive one:
+
+1. **Read the traceback, not the scariest line.** `MPClient: engine core exited
+   unexpectedly` looks like a vLLM/CUDA infrastructure failure and would have sent a
+   diagnosis down the wrong path. It was a consequence of the parent dying. This is the
+   same misattribution pattern the whole lab exists to study, encountered in our own
+   tooling.
+2. **Any code path that runs *after* an expensive GPU stage must be exercised *before*
+   it.** The bug was deterministic and would have been caught in under a second by a
+   synthetic sample. Instead it cost a full generation arm. Post-processing code is
+   exactly where this happens, because it only executes once the expensive part is
+   already done — cheap smoke-test first, then spend the GPU.

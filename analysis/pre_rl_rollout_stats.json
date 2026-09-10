@@ -1,0 +1,39 @@
+{
+  "n_prompts": 64,
+  "G": 8,
+  "n_samples": 512,
+  "temperature": 1.0,
+  "max_response_length": 4096,
+  "seed": 20260910,
+  "gen_wall_s": 747.4124660491943,
+  "total_out_tokens": 2024795,
+  "reward_mean": -0.74609375,
+  "accuracy": 0.126953125,
+  "all_correct_group_ratio": 0.046875,
+  "all_wrong_group_ratio": 0.75,
+  "mixed_group_ratio": 0.203125,
+  "zero_std_group_ratio": 0.796875,
+  "states": {
+    "TRUNCATED": 442,
+    "OK_CORRECT": 65,
+    "OK_INCORRECT": 2,
+    "PARSE_FAILURE": 3
+  },
+  "truncation_rate": 0.87109375,
+  "resp_tokens": {
+    "mean": 3954.677734375,
+    "median": 4096.0,
+    "p95": 4096,
+    "max": 4096
+  },
+  "verifier_latency_ms": {
+    "mean": 0.019827159121632576,
+    "median": 0.01605786383152008,
+    "p95": 0.021580606698989868,
+    "max": 1.623682677745819
+  },
+  "format_false_negative_upper_bound": 0.5,
+  "fn_outside_window": 0.060546875,
+  "fn_formatting": 0.0,
+  "fn_no_marker": 0.423828125
+}
