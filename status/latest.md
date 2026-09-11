@@ -1,11 +1,47 @@
 # Live Run Status
 
-Updated 2026-09-10T20:45:16+08:00; CPU audit of completed runs.
+_Updated 2026-09-11T08:55:18 · health **GREEN**_
 
-- Ratio probe: 3 arms × 3 outer steps complete; driver exit 0 for all arms.
-- Exit cleanup traceback in each arm; root cause PENDING.
-- No active training observed at takeover; all four GPUs idle. This is a snapshot, not a continuing monitor.
-- R1: 20 steps complete. R2: 2-step smoke complete.
-- [Ratio probe report](../analysis/ratio_probe_report.md)
-- No additional paid run started. Further diagnostic instrumentation and GPU probe: NOT RUN.
-- Probe bypassed flight recorder. This status was written after completion, not reconstructed live telemetry.
+| | |
+|---|---|
+| Run | `R_gspo_smoke` (`R_gspo_smoke-20260911-085513`) |
+| Algorithm | GSPO |
+| Model | Qwen/Qwen3-8B |
+| Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
+| Current optimizer step | **None** |
+| Updates recorded | 0 |
+| Elapsed | 6 s |
+| Health | **GREEN** |
+
+## Latest update
+
+| metric | value |
+|---|---|
+| reward_mean | unavailable |
+| KL | unavailable |
+| entropy | unavailable |
+| clip_fraction | unavailable |
+| grad_norm | unavailable |
+| mixed_group_ratio | unavailable |
+| zero_std_group_ratio | unavailable |
+| effective_signal_fraction | unavailable |
+| response_length_mean | unavailable |
+| truncation_rate | unavailable |
+| rollout time (s) | unavailable |
+| actor update time (s) | unavailable |
+
+## System
+
+GPU util: `[0, 0, 0, 0]`
+GPU mem (GiB): `[0.503, 0.503, 0.503, 0.503]`
+disk / : 1.27%   disk data: 3.06%
+
+## Incidents
+
+0 recorded. Latest: `none`
+
+Last checkpoint: `none`
+Git commit: `95f27f8`
+
+_Values shown as `unavailable` are metrics the current VeRL build does not emit.
+They are never substituted with 0._
