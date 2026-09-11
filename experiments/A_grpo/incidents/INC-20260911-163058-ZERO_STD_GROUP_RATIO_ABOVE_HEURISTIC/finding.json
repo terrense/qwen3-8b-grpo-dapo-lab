@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "zero_std_group_ratio_above_heuristic",
+  "metric": "zero_std_group_ratio",
+  "value": 0.8125,
+  "step": 15,
+  "threshold": 0.7,
+  "detail": "zero_std_group_ratio=0.812 exceeds heuristic 0.7"
+}
