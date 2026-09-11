@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "response_length_mean_robust_z",
+  "metric": "response_length_mean",
+  "value": 2494.890625,
+  "step": 17,
+  "z": 4.19,
+  "detail": "response_length_mean=2494.890625 is +4.2 robust-z from the rolling median of the last 16 updates"
+}
