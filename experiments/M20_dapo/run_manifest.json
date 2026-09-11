@@ -23,7 +23,7 @@
   "rollout_dump_dir": "/root/autodl-tmp/rl_lab/logs/M20_dapo-20260911-111356/rollout_dump",
   "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint.",
   "end_ts": 1789099174.0707474,
-  "report_generated_ts": 1789099174.0707486,
+  "report_generated_ts": 1789112906.7541096,
   "exit_code": 0,
   "updates_recorded": 20
 }

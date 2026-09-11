@@ -290,24 +290,21 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| Infrastructure validation | **PASS** |
-| CUDA 13 / torch 2.11 stack | **PASS** |
-| Qwen3-8B via vLLM 0.24 | **PASS** |
-| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
-| RLVR verifier gate | **PASS** |
-| Flight recorder | **ACTIVE** |
-| R0 — GRPO smoke | **IN PROGRESS** |
-| R1 — Vanilla GRPO | **NOT RUN** |
-| R2 — DAPO | **NOT RUN** |
-| R3 — Failure injection | **NOT RUN** |
+| Infrastructure / CUDA 13 / NCCL / verifier gate | **PASS** |
+| R0 smoke · R1 baseline · R2 DAPO smoke · GSPO smoke | **PASS** |
+| Ratio-distribution instrumentation | **PASS** |
+| **Matched 20-update: GRPO vs GSPO vs DAPO** | **PASS** · 三臂各 20/20, exit 0 |
+| Dr.GRPO / VAPO / R3 failure injection | **NOT RUN** |
 
-**Live run** `M20_dapo` · step **19** ·
-health **GREEN** · reward 0.1250 ·
-KL -0.00004 · entropy 0.3706 ·
-effective signal 1.00 ·
-incidents 1
+**三臂对比核心发现**（[完整报告](analysis/ALGORITHM_COMPARISON.md) · [图](figures/generated)）：
+DAPO 的 dynamic sampling 让每个 batch **100% 是混合组**（GRPO 只有 58%），代价是 rollout
+时间 **1.93 倍**；换算单位算力产出 DAPO 反而略低（12.4 vs 14.0 有效组/rollout分钟）——
+**它买的是 batch 确定性，不是效率**。GRPO 的废组不随训练减少，只是从"太难"（全错 6→2）
+变成"太简单"（全对 0→5）。GSPO 把 ratio 离散度压约 **40 倍**（= √|y|，符合中心极限），
+但 **clipfrac 20 步全为 0**，说明其 trust region 从未被触碰。
 
-_Auto-updated 2026-09-11T11:59:23 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+**不能下的结论**：谁训得更好。validation 差异（47% / 51% / 47%）在噪声内 ——
+200 道验证题在 50% 附近的标准误就有 3.54 个百分点。
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

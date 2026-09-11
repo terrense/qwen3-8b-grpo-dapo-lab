@@ -4,7 +4,7 @@
 **Outcome:** **COMPLETED**
 **Duration:** 45.6 min
 **Optimizer updates recorded:** 20
-**Generated:** 2026-09-11T11:59:34
+**Generated:** 2026-09-11T15:48:26
 
 ## Configuration
 
@@ -88,7 +88,7 @@ See `figures/05_length_dynamics.png`.
 |---|---|
 | tokens/sec | first 429 -> last 398 (min 398, max 595, mean 501) |
 | step wall time (s) | first 125.3 -> last 176.6 (min 86.4, max 176.6, mean 122.1) |
-| peak VRAM GPU0 (GiB) | first 84.4 -> last 84.4 (min 84.4, max 84.4, mean 84.4) |
+| peak VRAM GPU0 (GiB) | unavailable |
 
 **Policy provenance / staleness:** unavailable. For synchronous GRPO this should
 be a constant; a drifting value would mean rollouts are being consumed by a
