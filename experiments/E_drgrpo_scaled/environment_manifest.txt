@@ -1,0 +1,84 @@
+=========================================================
+ VERSION MANIFEST -- Qwen3-8B GRPO/DAPO lab
+=========================================================
+Date generated      : 2026-09-10T11:55:50+08:00
+Node                : AutoDL single node, containerised (host identifiers redacted)
+
+--------------------- HARDWARE --------------------------
+GPU model           : NVIDIA H20
+GPU count           : 4
+VRAM per GPU        : 97871 MiB (~95.6 GiB); torch reports 95.07 GiB
+Compute capability  : 9.0 (Hopper, sm90)
+NVLink topology     : full NV18 mesh, GPU0-GPU3 all-to-all, 18 links/GPU @ 26.562 GB/s
+NCCL all-reduce     : 351.1 GB/s busBW @ 1GB, rank spread 0.01% -> PASS
+CPU                 : AMD EPYC 9K84, 128 logical CPUs, 2 NUMA nodes
+RAM                 : ~1.2 TiB total / ~1.2 TiB available
+/dev/shm            : 300 GB
+Data disk           : 1.3 TB xfs, ~226 MB/s sequential direct write
+System disk         : 30 GB overlay (kept empty by design)
+
+--------------------- DRIVER / AMBIENT ------------------
+NVIDIA driver       : 580.105.08
+Driver CUDA support : 13.0
+Ambient Python      : 3.12.3 (Anaconda) -- NOT modified
+Ambient PyTorch     : 2.8.0+cu128       -- NOT modified
+Ambient torch CUDA  : 12.8
+Ambient NCCL        : 2.27.3
+
+--------------------- VeRL ENVIRONMENT ------------------
+Built with          : uv sync --frozen --all-packages --extra vllm --extra fsdp
+Isolation           : dedicated venv at repos/verl/.venv (data disk); ambient env untouched
+Contract (pyproject at the commit below):
+  requires-python   : >=3.10,<3.13   (uv environments target >=3.12)  -> node 3.12.3 OK
+  torch             : 2.11.0  (index pytorch-cu130, i.e. CUDA 13.0)
+  torchvision       : 0.26.0
+  torchaudio        : 2.11.0
+  vllm              : 0.24.0
+  transformers      : 5.9.0   (project-wide override-dependencies)
+  flash-attn        : 2.8.3   (prebuilt from verl-wheelhouse index, no source build)
+  ray               : 2.55.1  (lock)
+  flashinfer-python : 0.6.11.post1 / 0.6.12 (per-backend)
+Status              : COMPLETE -- CU130_STACK_VALIDATED = PASS (see analysis/PRE_RL_GATE_REPORT.md)
+Resolved pip freeze : manifests/pip_freeze.txt (written once the sync completes)
+
+--------------------- REPOSITORIES ----------------------
+verl
+  remote            : https://github.com/verl-project/verl
+  branch            : main
+  commit            : 1252cc71aa5bd82e5604322064d69bfe6454c660
+  short             : 1252cc71
+  nearest tag       : v0.9.0 + 113 commits
+verl-recipe
+  remote            : https://github.com/verl-project/verl-recipe
+  commit            : 7f14b203934a981664b295696e930f9276825bf0
+DAPO
+  remote            : https://github.com/BytedTsinghua-SIA/DAPO
+  commit            : 33fe3176f0bb212588e84fc8ccf50dd554975144
+
+--------------------- MODEL / DATA ----------------------
+Model               : Qwen/Qwen3-8B  (post-trained release; NOT -Base, NOT VL)
+Train dataset       : BytedTsinghua-SIA/DAPO-Math-17k
+Validation          : AIME 2024
+Details             : manifests/model.md , manifests/dataset.md
+
+--------------------- VALIDATED RUNTIME (measured) ------
+Python              : 3.12.3
+torch               : 2.11.0+cu130
+torch CUDA          : 13.0
+NCCL (venv)         : 2.28.9
+vllm                : 0.24.0
+transformers        : 5.9.0
+ray                 : 2.55.1
+flash-attn          : 2.8.3
+flashinfer-python   : 0.6.12
+triton              : 3.6.0
+tensordict          : 0.10.0
+verl                : 0.10.0.dev0
+BF16 CUDA           : PASS
+FlashAttention sm90 : PASS (max|fa-sdpa| = 0.0078 bf16)
+vLLM Qwen3-8B       : PASS (load 118.3s; peak 60.11 GiB @ gpu_mem_util 0.60)
+4-GPU NCCL cu130    : PASS (349.8 GB/s busBW @1GB, spread 0.04%)
+
+NOTE: uv.lock PyPI urls retargeted to mirrors.aliyun.com (INC-003).
+      Versions and all 1413 sha256 hashes unchanged and still verified by uv.
+      Upstream copy: system/uv.lock.upstream.bak ; revert: git checkout uv.lock
