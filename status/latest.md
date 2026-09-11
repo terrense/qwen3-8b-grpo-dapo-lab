@@ -1,6 +1,6 @@
 # Live Run Status
 
-_Updated 2026-09-11T11:58:23 · health **GREEN**_
+_Updated 2026-09-11T11:59:23 · health **GREEN**_
 
 | | |
 |---|---|
@@ -10,7 +10,7 @@ _Updated 2026-09-11T11:58:23 · health **GREEN**_
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
 | Current optimizer step | **19** |
 | Updates recorded | 19 |
-| Elapsed | 2667 s |
+| Elapsed | 2727 s |
 | Health | **GREEN** |
 
 ## Latest update
@@ -41,7 +41,7 @@ disk / : 1.27%   disk data: 3.07%
 1 recorded. Latest: `INC-20260911-114303-T_STEP_ROBUST_Z`
 
 Last checkpoint: `none`
-Git commit: `903f374`
+Git commit: `b5d2821`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._

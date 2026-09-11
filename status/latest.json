@@ -6,7 +6,7 @@
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
   "current_step": 19,
   "updates_recorded": 19,
-  "elapsed_s": 2667.3,
+  "elapsed_s": 2727.3,
   "health": "GREEN",
   "reward_mean": 0.125,
   "kl": -3.5921511994274624e-05,
@@ -38,6 +38,6 @@
   "n_incidents": 1,
   "latest_incident": "INC-20260911-114303-T_STEP_ROBUST_Z",
   "last_checkpoint": null,
-  "git_commit": "903f374",
-  "updated": "2026-09-11T11:58:23"
+  "git_commit": "b5d2821",
+  "updated": "2026-09-11T11:59:23"
 }
