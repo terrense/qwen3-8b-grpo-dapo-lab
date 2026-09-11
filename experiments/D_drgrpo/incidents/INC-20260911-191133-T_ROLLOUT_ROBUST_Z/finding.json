@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "t_rollout_robust_z",
+  "metric": "t_rollout",
+  "value": 58.38026152551174,
+  "step": 14,
+  "z": 6.53,
+  "detail": "t_rollout=58.38026152551174 is +6.5 robust-z from the rolling median of the last 13 updates"
+}
