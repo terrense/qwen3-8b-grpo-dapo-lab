@@ -1,47 +1,47 @@
 # Live Run Status
 
-_Updated 2026-09-11T18:37:29 · health **GREEN**_
+_Updated 2026-09-11T18:52:53 · health **GREEN**_
 
 | | |
 |---|---|
-| Run | `C_aggonly` (`C_aggonly-20260911-174244`) |
-| Algorithm | GRPO_seqagg |
+| Run | `D_drgrpo` (`D_drgrpo-20260911-183747`) |
+| Algorithm | DrGRPO |
 | Model | Qwen/Qwen3-8B |
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
-| Current optimizer step | **20** |
-| Updates recorded | 20 |
-| Elapsed | 3285 s |
+| Current optimizer step | **7** |
+| Updates recorded | 7 |
+| Elapsed | 906 s |
 | Health | **GREEN** |
 
 ## Latest update
 
 | metric | value |
 |---|---|
-| reward_mean | -0.1094 |
-| KL | -0.00002 |
-| entropy | 0.3124 |
-| clip_fraction | 0.0001 |
-| grad_norm | 0.1908 |
+| reward_mean | 0.0469 |
+| KL | -0.00001 |
+| entropy | 0.0671 |
+| clip_fraction | 0.0002 |
+| grad_norm | 0.0403 |
 | mixed_group_ratio | 0.562 |
 | zero_std_group_ratio | 0.438 |
 | effective_signal_fraction | 0.562 |
-| response_length_mean | 2520.0 |
+| response_length_mean | 1776.2 |
 | truncation_rate | unavailable |
-| rollout time (s) | 58.4 |
-| actor update time (s) | 46.4 |
+| rollout time (s) | 48.4 |
+| actor update time (s) | 32.8 |
 
 ## System
 
-GPU util: `[0, 0, 0, 0]`
-GPU mem (GiB): `[87.222, 92.445, 92.788, 92.788]`
+GPU util: `[99, 99, 99, 100]`
+GPU mem (GiB): `[54.23, 58.73, 58.73, 58.73]`
 disk / : 1.27%   disk data: 3.09%
 
 ## Incidents
 
-3 recorded. Latest: `INC-20260911-183649-TRAINING_STALL`
+0 recorded. Latest: `none`
 
 Last checkpoint: `none`
-Git commit: `0dd767d`
+Git commit: `a24ffde`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._
