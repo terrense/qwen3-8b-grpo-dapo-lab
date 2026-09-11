@@ -290,30 +290,24 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| Infrastructure / CUDA 13 / 4-GPU NCCL / verifier gate | **PASS** |
-| R0 — GRPO smoke | **PASS** · 2 updates, exit 0 |
-| R1 — vanilla GRPO baseline | **PASS** · 20 updates, exit 0 |
-| R2 — DAPO smoke | **PASS** · 2 updates, exit 0 |
-| R2 — DAPO 20-update matched run | **BLOCKED** — see below |
-| Dr.GRPO / GSPO | **PLANNED** |
-| VAPO | **NOT IMPLEMENTED UPSTREAM** |
-| R3 — failure injection | **NOT RUN** |
+| Infrastructure validation | **PASS** |
+| CUDA 13 / torch 2.11 stack | **PASS** |
+| Qwen3-8B via vLLM 0.24 | **PASS** |
+| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
+| RLVR verifier gate | **PASS** |
+| Flight recorder | **ACTIVE** |
+| R0 — GRPO smoke | **IN PROGRESS** |
+| R1 — Vanilla GRPO | **NOT RUN** |
+| R2 — DAPO | **NOT RUN** |
+| R3 — Failure injection | **NOT RUN** |
 
-**R1**: validation 49.5% @10 → 48.5% @20 · effective signal 63.75% · no length or entropy collapse.
-Establishes a working control; **does not** establish a generalization improvement.
+**Live run** `R2_dapo_smoke` · step **1** ·
+health **GREEN** · reward -0.0473 ·
+KL -0.00002 · entropy 0.3446 ·
+effective signal 1.00 ·
+incidents 0
 
-**R2 DAPO smoke**: dynamic sampling confirmed working — `num_gen_batches=2`, triggered by
-`num_prompt_in_batch=10 < prompt_bsz=16` (62.5% survival, matching R1's 63.75%). Rollout
-generation ~2x, but dropping KL removes the reference forward pass entirely (−3 GB peak VRAM,
-no `timing_s/ref`), so net step cost is only ~+30%.
-
-**Why the 20-update DAPO run is blocked**: `pg_clipfrac` stays at ~1e-4 in both arms, i.e.
-ρ ≈ 1 at lr 1e-6 with only 2 gradient steps per update. Clip-Higher is therefore
-**unmeasurable**, not ineffective — the (1.2, 1.28] band holds too few tokens to act on
-(only 0.05% of tokens deviate by more than 20%). **A GSPO arm is NOT vacuous**, contrary to an
-earlier claim here: the measured ratio distribution is sharply peaked but heavy-tailed
-(|ρ−1| p99 = 0.055, max 0.42, 8% of tokens beyond 1%), which is exactly what GSPO addresses.
-[R1 vs R2 analysis](analysis/R1_vs_R2.md) · [踩坑记录](analysis/BUG_LOG.md)
+_Auto-updated 2026-09-10T17:22:06 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically
