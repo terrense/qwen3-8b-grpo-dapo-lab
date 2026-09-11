@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "t_step_robust_z",
+  "metric": "t_step",
+  "value": 130.78924430161715,
+  "step": 17,
+  "z": 4.42,
+  "detail": "t_step=130.78924430161715 is +4.4 robust-z from the rolling median of the last 16 updates"
+}
