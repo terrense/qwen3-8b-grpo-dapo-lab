@@ -26,6 +26,10 @@ GREEN, YELLOW, RED = "GREEN", "YELLOW", "RED"
 WINDOW = 20          # rolling window of updates for adaptive rules
 MIN_HISTORY = 6      # below this, adaptive rules abstain (scale not yet known)
 ROBUST_Z = 4.0       # MAD-based z above which a jump is "anomalous"
+# MAD 退化保护：某些指标（比如 rollout 时间）步间极其稳定，MAD 会趋近 0，
+# 于是一个 4% 的正常波动会被报成 z=112。实测案例见 BUG_LOG #25。
+# 所以除了 z 阈值，还要求相对中位数的偏离达到这个下限才算异常。
+MIN_REL_EFFECT = 0.20
 
 # Absolute rules with defensible semantics (still heuristics, documented as such).
 ABS_RULES = {
@@ -38,9 +42,12 @@ ABS_RULES = {
 }
 
 # Metrics watched by the adaptive rule, and the direction that is suspicious.
+# 注意：actor/ppo_kl 故意不在这里。它是 (old_logprob - logprob) 的带符号均值，
+# 天然在 0 附近正负翻转（实测连续步 +5.1e-5 / -4.9e-5 / +3.1e-5），
+# 对零中心量做 robust-z 只会产生误报 —— 见 BUG_LOG #25。
+# 要看策略偏移请用 ratio_absdev_p99 / ratio_frac_gt_*。
 ADAPTIVE = {
     "reward_mean": "both",
-    "kl": "up",
     "entropy": "down",
     "clip_fraction": "up",
     "grad_norm": "up",
@@ -129,6 +136,13 @@ class IncidentDetector:
                 bad = (direction == "up" and z > ROBUST_Z) or \
                       (direction == "down" and z < -ROBUST_Z) or \
                       (direction == "both" and abs(z) > ROBUST_Z)
+                # MAD 退化保护：z 大但相对偏离很小 -> 不是有意义的异常
+                if bad:
+                    h = [x for x in self.hist[metric] if _finite(x)]
+                    med = statistics.median(h) if h else 0.0
+                    rel = abs(v - med) / abs(med) if med else float("inf")
+                    if rel < MIN_REL_EFFECT:
+                        bad = False
                 if bad:
                     findings.append(dict(level=YELLOW, rule=f"{metric}_robust_z",
                                          metric=metric, value=v, step=step, z=round(z, 2),

@@ -53,12 +53,26 @@ LR, and only then KL/clipping.
 
 ## Root cause
 
-PENDING
+检测器误报，不是训练问题。
+
+`actor/ppo_kl` 是 (old_logprob - logprob) 的**带符号均值**（core_algos.py:1339），
+天然在 0 附近正负翻转。本次窗口的历史值：
+
+    [-1.5e-05, -0.0, -1.8e-05, +2.1e-05, -2.1e-05, -1.5e-05]
+
+中位数 -1.49e-05、MAD 5.0e-06，当前值 +2.2e-05 只是又一次符号翻转，
+但按 robust-z 算出来是 +5.0。
+
+对一个零中心、会正负翻转的量做 robust-z 本身就没有意义 ——
+"相对中位数偏离 248%" 这种数字在中位数接近 0 时不可解释。
 
 ## Fix
 
-PENDING
+把 `kl` 从 incident_detector.py 的 ADAPTIVE 规则里移除，并在代码里写明原因。
+判断策略偏移改用 `actor/ratio_absdev_p99` 和 `actor/ratio_frac_gt_*`
+（见 analysis/ratio_distribution.md：ppo_kl 对分布宽度根本不敏感，
+梯度步 2->8 时分布宽度翻倍而 ppo_kl 纹丝不动）。
 
 ## Post-fix evidence
 
-PENDING
+用真实历史回放确认：修改后 `kl` 已不在 ADAPTIVE 中，同样的输入不再触发。
