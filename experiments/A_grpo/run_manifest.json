@@ -21,5 +21,9 @@
   "vllm": "0.24.0",
   "trainer_log": "/root/autodl-tmp/rl_lab/logs/A_grpo-20260911-155511/trainer.log",
   "rollout_dump_dir": "/root/autodl-tmp/rl_lab/logs/A_grpo-20260911-155511/rollout_dump",
-  "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint."
+  "note": "GRPO systems pilot / rehearsal. NOT the medical paper's M3 checkpoint.",
+  "end_ts": 1789116525.7173345,
+  "report_generated_ts": 1789116525.7173355,
+  "exit_code": 0,
+  "updates_recorded": 20
 }
