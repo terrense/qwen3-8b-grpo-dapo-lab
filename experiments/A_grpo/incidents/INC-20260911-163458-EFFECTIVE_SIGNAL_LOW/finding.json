@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "effective_signal_low",
+  "metric": "effective_signal_fraction",
+  "value": 0.25,
+  "step": 17,
+  "threshold": 0.3,
+  "detail": "only 25.0% of groups carry gradient signal"
+}
