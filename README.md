@@ -290,25 +290,24 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| 硬件 / CUDA13 / NCCL / RLVR verifier gate | **PASS** |
-| R0 smoke · R1 baseline · R2 DAPO · GSPO smoke | **PASS** |
-| ratio 分布观测补丁（58 行插入 / 0 行删除） | **PASS** |
-| M20 三臂 matched（GRPO/GSPO/DAPO） | **PASS** |
-| 四臂消融（+ C_aggonly 分离变量，验证集 1500） | **PASS** |
-| **[RL 工程总报告](analysis/FINAL_RL_ENGINEERING_REPORT.md)** | **已完成** |
-| R3 失败注入 · checkpoint/resume · 多 seed | **NOT RUN** |
+| Infrastructure validation | **PASS** |
+| CUDA 13 / torch 2.11 stack | **PASS** |
+| Qwen3-8B via vLLM 0.24 | **PASS** |
+| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
+| RLVR verifier gate | **PASS** |
+| Flight recorder | **ACTIVE** |
+| R0 — GRPO smoke | **IN PROGRESS** |
+| R1 — Vanilla GRPO | **NOT RUN** |
+| R2 — DAPO | **NOT RUN** |
+| R3 — Failure injection | **NOT RUN** |
 
-**最重要的发现**：同一个算法（vanilla GRPO）跑两次，**reward 符号翻转、回答长度差 65%**，
-而机制类指标（ratio 分布、advantage 尺度）复现到 **1~3%**。
-所以四个臂在 validation 上最大 0.84 个标准误的差异**全在噪声里** ——
-n=1 的 20-update 运行能验证机制，不能比较效果。
+**Live run** `E_drgrpo_scaled` · step **7** ·
+health **YELLOW** · reward 0.0781 ·
+KL 0.00002 · entropy 0.2640 ·
+effective signal 0.50 ·
+incidents 1
 
-**机制类结论（站得住）**：GSPO 的 sequence ratio 压缩约 √|y| ≈ 40 倍但 **clipping 从未触发**
-（23 个 update 的 clipfrac 全为 0），效果只能来自 loss 聚合方式；DAPO 的 dynamic sampling
-让 batch **100% 有效**（GRPO 只有 58%）但 rollout 时间 1.93 倍，**买的是确定性不是效率**；
-Dr.GRPO 的 advantage 尺度精确等于去掉 std 归一化的理论值（1.675 vs 理论 1.75/1.50）。
-
-[消融分析](analysis/ABLATION.md) · [三臂对比](analysis/ALGORITHM_COMPARISON.md) · [24 条踩坑](analysis/BUG_LOG.md)
+_Auto-updated 2026-09-11T19:47:55 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

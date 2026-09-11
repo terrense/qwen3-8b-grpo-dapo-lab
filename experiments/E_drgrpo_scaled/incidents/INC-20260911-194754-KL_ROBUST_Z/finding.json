@@ -1,0 +1,9 @@
+{
+  "level": "YELLOW",
+  "rule": "kl_robust_z",
+  "metric": "kl",
+  "value": 2.2035671804587764e-05,
+  "step": 7,
+  "z": 4.96,
+  "detail": "kl=2.2035671804587764e-05 is +5.0 robust-z from the rolling median of the last 6 updates"
+}
