@@ -6,8 +6,8 @@
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
   "current_step": 19,
   "updates_recorded": 19,
-  "elapsed_s": 3166.9,
-  "health": "YELLOW",
+  "elapsed_s": 3206.7,
+  "health": "GREEN",
   "reward_mean": -0.046875,
   "kl": -2.0682647800640552e-05,
   "entropy": 0.26873958110809326,
@@ -24,20 +24,20 @@
   "gpu_util_pct": [
     100,
     100,
-    100,
-    100
+    0,
+    0
   ],
   "gpu_mem_used_gib": [
     87.443,
     92.737,
     92.45,
-    92.448
+    92.45
   ],
   "disk_root_pct": 1.27,
   "disk_data_pct": 3.08,
   "n_incidents": 5,
   "latest_incident": "INC-20260911-174139-TRAINING_STALL",
   "last_checkpoint": null,
-  "git_commit": "883941d",
-  "updated": "2026-09-11T17:41:39"
+  "git_commit": "26c3dd3",
+  "updated": "2026-09-11T17:42:19"
 }

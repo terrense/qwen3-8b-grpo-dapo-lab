@@ -302,12 +302,12 @@ Definitions and the real VeRL key behind each metric:
 | R3 — Failure injection | **NOT RUN** |
 
 **Live run** `B_gspo` · step **19** ·
-health **YELLOW** · reward -0.0469 ·
+health **GREEN** · reward -0.0469 ·
 KL -0.00002 · entropy 0.2687 ·
 effective signal 0.62 ·
 incidents 5
 
-_Auto-updated 2026-09-11T17:41:39 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+_Auto-updated 2026-09-11T17:42:19 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

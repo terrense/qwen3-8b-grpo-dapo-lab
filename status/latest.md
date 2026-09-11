@@ -1,6 +1,6 @@
 # Live Run Status
 
-_Updated 2026-09-11T17:41:39 · health **YELLOW**_
+_Updated 2026-09-11T17:42:19 · health **GREEN**_
 
 | | |
 |---|---|
@@ -10,8 +10,8 @@ _Updated 2026-09-11T17:41:39 · health **YELLOW**_
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
 | Current optimizer step | **19** |
 | Updates recorded | 19 |
-| Elapsed | 3167 s |
-| Health | **YELLOW** |
+| Elapsed | 3207 s |
+| Health | **GREEN** |
 
 ## Latest update
 
@@ -32,8 +32,8 @@ _Updated 2026-09-11T17:41:39 · health **YELLOW**_
 
 ## System
 
-GPU util: `[100, 100, 100, 100]`
-GPU mem (GiB): `[87.443, 92.737, 92.45, 92.448]`
+GPU util: `[100, 100, 0, 0]`
+GPU mem (GiB): `[87.443, 92.737, 92.45, 92.45]`
 disk / : 1.27%   disk data: 3.08%
 
 ## Incidents
@@ -41,7 +41,7 @@ disk / : 1.27%   disk data: 3.08%
 5 recorded. Latest: `INC-20260911-174139-TRAINING_STALL`
 
 Last checkpoint: `none`
-Git commit: `883941d`
+Git commit: `26c3dd3`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._
