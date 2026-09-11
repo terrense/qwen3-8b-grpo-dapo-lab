@@ -301,13 +301,13 @@ Definitions and the real VeRL key behind each metric:
 | R2 — DAPO | **NOT RUN** |
 | R3 — Failure injection | **NOT RUN** |
 
-**Live run** `R_gspo_smoke` · step **None** ·
-health **GREEN** · reward — ·
-KL — · entropy — ·
-effective signal — ·
+**Live run** `R_gspo_smoke` · step **3** ·
+health **GREEN** · reward -0.4062 ·
+KL -0.00000 · entropy 0.4437 ·
+effective signal 0.50 ·
 incidents 0
 
-_Auto-updated 2026-09-11T08:55:18 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+_Auto-updated 2026-09-11T09:05:51 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically

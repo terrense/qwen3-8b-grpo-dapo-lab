@@ -1,6 +1,6 @@
 # Live Run Status
 
-_Updated 2026-09-11T08:59:51 · health **GREEN**_
+_Updated 2026-09-11T09:05:51 · health **GREEN**_
 
 | | |
 |---|---|
@@ -8,32 +8,32 @@ _Updated 2026-09-11T08:59:51 · health **GREEN**_
 | Algorithm | GSPO |
 | Model | Qwen/Qwen3-8B |
 | Dataset | BytedTsinghua-SIA/DAPO-Math-17k |
-| Current optimizer step | **None** |
-| Updates recorded | 0 |
-| Elapsed | 105 s |
+| Current optimizer step | **3** |
+| Updates recorded | 3 |
+| Elapsed | 465 s |
 | Health | **GREEN** |
 
 ## Latest update
 
 | metric | value |
 |---|---|
-| reward_mean | unavailable |
-| KL | unavailable |
-| entropy | unavailable |
-| clip_fraction | unavailable |
-| grad_norm | unavailable |
-| mixed_group_ratio | unavailable |
-| zero_std_group_ratio | unavailable |
-| effective_signal_fraction | unavailable |
-| response_length_mean | unavailable |
+| reward_mean | -0.4062 |
+| KL | -0.00000 |
+| entropy | 0.4437 |
+| clip_fraction | 0.0000 |
+| grad_norm | 0.2611 |
+| mixed_group_ratio | 0.500 |
+| zero_std_group_ratio | 0.500 |
+| effective_signal_fraction | 0.500 |
+| response_length_mean | 1809.5 |
 | truncation_rate | unavailable |
-| rollout time (s) | unavailable |
-| actor update time (s) | unavailable |
+| rollout time (s) | 36.4 |
+| actor update time (s) | 33.4 |
 
 ## System
 
-GPU util: `[0, 0, 0, 0]`
-GPU mem (GiB): `[13.975, 16.424, 16.424, 16.424]`
+GPU util: `[24, 0, 11, 0]`
+GPU mem (GiB): `[43.521, 48.665, 48.665, 44.027]`
 disk / : 1.27%   disk data: 3.06%
 
 ## Incidents
@@ -41,7 +41,7 @@ disk / : 1.27%   disk data: 3.06%
 0 recorded. Latest: `none`
 
 Last checkpoint: `none`
-Git commit: `20fc23a`
+Git commit: `5982b31`
 
 _Values shown as `unavailable` are metrics the current VeRL build does not emit.
 They are never substituted with 0._
