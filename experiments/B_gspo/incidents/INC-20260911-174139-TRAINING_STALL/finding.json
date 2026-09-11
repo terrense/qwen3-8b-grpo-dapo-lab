@@ -1,0 +1,8 @@
+{
+  "level": "YELLOW",
+  "rule": "training_stall",
+  "metric": "global_step",
+  "value": 19,
+  "step": 19,
+  "detail": "no new optimizer step for 600s (adaptive threshold 600s = max(3x median update, 600s))"
+}
