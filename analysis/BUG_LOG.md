@@ -432,6 +432,46 @@ ppo_kl = masked_mean(-negative_approx_kl, response_mask)
 **均值不是分布。** 在下「有没有东西可测」这种结论之前，先把分布量出来，
 成本就是几行观测代码。
 
+
+### 22. GSPO 的配置键名我是按注册名猜的，猜错了
+
+`@register_policy_loss("gspo")` 注册的名字是 `gspo`，我就顺手写成：
+
+```
+actor_rollout_ref.actor.policy_loss.policy_loss_mode=gspo
+```
+
+Hydra 直接拒了：
+
+```
+Key 'policy_loss_mode' is not in struct
+    full_key: actor_rollout_ref.actor.policy_loss.policy_loss_mode
+```
+
+真实的键是 **`actor_rollout_ref.actor.policy_loss.loss_mode`**。
+`policy_loss_mode` 这个名字确实存在，但在完全无关的
+`distillation.distillation_loss.policy_loss_mode` 下面。
+
+怎么查的 —— 直接把 generated config 当字典遍历，比 grep 靠谱：
+
+```python
+import yaml
+d = yaml.safe_load(open("verl/trainer/config/_generated_ppo_trainer.yaml"))
+print(d["actor_rollout_ref"]["actor"]["policy_loss"])
+# {'_target_': ..., 'loss_mode': 'vanilla', 'clip_cov_ratio': ..., ...}
+```
+
+**打脸的地方**：项目一开始我就给自己定过规矩「任何 config key 都必须通过当前源码确认，
+不准凭空创造」。结果这次从函数的注册名反推键名，没验就写进了脚本、configs/、
+还有两份文档。四个文件一起错。
+
+好在 Hydra 是 fail-fast 的，模型都没加载就挂了，没烧 GPU。
+但如果这个键恰好存在于别处、只是语义不对，那就会静默跑出错误的实验 —— 那才是真的贵。
+
+**规矩补一条**：验配置键不要 grep 名字，要把 config 当字典按完整路径查。
+grep 会在无关的段落里给你假阳性 —— 这次 `policy_loss_mode` 就真的在
+distillation 下面存在。
+
 ---
 
 ## 一句话总结

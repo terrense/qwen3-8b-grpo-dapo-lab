@@ -1,12 +1,12 @@
 {
   "run_id": "R_gspo_smoke",
-  "run_uid": "R_gspo_smoke-20260911-085513",
+  "run_uid": "R_gspo_smoke-20260911-085807",
   "algorithm": "GSPO",
   "model": "Qwen/Qwen3-8B",
   "dataset": "BytedTsinghua-SIA/DAPO-Math-17k",
   "current_step": null,
   "updates_recorded": 0,
-  "elapsed_s": 5.7,
+  "elapsed_s": 104.9,
   "health": "GREEN",
   "reward_mean": null,
   "kl": null,
@@ -28,16 +28,16 @@
     0
   ],
   "gpu_mem_used_gib": [
-    0.503,
-    0.503,
-    0.503,
-    0.503
+    13.975,
+    16.424,
+    16.424,
+    16.424
   ],
   "disk_root_pct": 1.27,
   "disk_data_pct": 3.06,
   "n_incidents": 0,
   "latest_incident": null,
   "last_checkpoint": null,
-  "git_commit": "95f27f8",
-  "updated": "2026-09-11T08:55:18"
+  "git_commit": "20fc23a",
+  "updated": "2026-09-11T08:59:51"
 }
