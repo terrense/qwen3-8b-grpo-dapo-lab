@@ -1,0 +1,1 @@
+bash /root/autodl-tmp/rl_lab/scripts/training/run_r1_grpo_baseline.sh algorithm.norm_adv_by_std_in_grpo=False actor_rollout_ref.actor.loss_agg_mode=seq-mean-token-sum-norm actor_rollout_ref.actor.loss_scale_factor=8192 
