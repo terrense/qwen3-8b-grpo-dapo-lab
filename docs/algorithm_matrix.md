@@ -159,6 +159,9 @@ against sequence p01/p05/p50/p95/p99/max.
 > comparison run in that configuration would be meaningless.** All ratio experiments must
 > set `ppo_mini_batch_size < train_batch_size` (DAPO's own recipe uses 32 vs 512).
 
+> **更正（2026-09-11）**：上面这段对 `mini == train` 的判断是**对的** —— 那时 ρ 恰好等于 1。但由此外推出的「`mini < train` 时 ρ 仍然约等于 1，所以 GSPO 也测不出来」**是错的，已撤回**。在 `mini=8 / train=16`（R1、R2 用的配置）下实测：|ρ−1| 的 p99 = 0.055、极值 0.42、**8% 的 token 偏离超过 1%**。分布是尖峰厚尾，不是窄。错在拿 `ppo_kl`（带符号均值）当分布宽窄的判据 —— 它在连续三步里符号是 +、−、+ 翻转的，正是正负抵消的证据。**GSPO 不需要先改配置就能测。**见 [`../analysis/ratio_distribution.md`](../analysis/ratio_distribution.md)。
+
+
 ### VAPO — value-based cross-paradigm comparison
 
 Paper: [arXiv 2504.05118](https://arxiv.org/pdf/2504.05118), referenced in

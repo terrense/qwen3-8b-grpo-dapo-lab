@@ -124,6 +124,9 @@ $$
 > `ppo_mini_batch_size < train_batch_size` (R1 uses 8 < 16). This is the single most
 > important thing to get right before launching this experiment.
 
+> **更正（2026-09-11，实测 ratio 分布后）**：上面这段关于「ρ≈1 / ratio 恒等于 1，所以 GSPO 测不出东西」的说法**是错的，已撤回**。实测 |ρ−1| 的 p99 是 0.055、极值到 0.42，**8% 的 token 偏离超过 1%** —— 分布是尖峰厚尾，不是窄。错在拿 `ppo_kl`（带符号均值，正负会抵消）当分布宽窄的判据。**GSPO 这个臂有东西可测，不需要先改配置。** clip-higher 作用小这条保留，但理由变成「(1.2, 1.28] 窄带里 token 太少，>20% 偏离的只占 0.05%」。证据见 [`ratio_distribution.md`](../../analysis/ratio_distribution.md)。
+
+
 ---
 
 ## Instrumentation gap to close first

@@ -309,8 +309,10 @@ no `timing_s/ref`), so net step cost is only ~+30%.
 
 **Why the 20-update DAPO run is blocked**: `pg_clipfrac` stays at ~1e-4 in both arms, i.e.
 ρ ≈ 1 at lr 1e-6 with only 2 gradient steps per update. Clip-Higher is therefore
-**unmeasurable**, not ineffective — and a GSPO arm would be equally vacuous. Fixing it needs a
-larger `train/mini` ratio, which means re-running R1 as a matched control.
+**unmeasurable**, not ineffective — the (1.2, 1.28] band holds too few tokens to act on
+(only 0.05% of tokens deviate by more than 20%). **A GSPO arm is NOT vacuous**, contrary to an
+earlier claim here: the measured ratio distribution is sharply peaked but heavy-tailed
+(|ρ−1| p99 = 0.055, max 0.42, 8% of tokens beyond 1%), which is exactly what GSPO addresses.
 [R1 vs R2 analysis](analysis/R1_vs_R2.md) · [踩坑记录](analysis/BUG_LOG.md)
 <!-- STATUS_END -->
 
@@ -372,7 +374,8 @@ Only facts supported by a measurement in this repository.
 | Verifier cost is negligible (0.017 ms mean, 0% exceptions), so it can be excluded as a throughput bottleneck by inspection | 440 cases + 512 rollouts | [verifier test](analysis/verifier_unit_test.md) |
 | **Two of my own metric mappings were wrong**: `response_length/clip_ratio` compares against the padded tensor width, not the configured cap, so it was never a truncation rate; `pg_clipfrac`/`pg_clipfrac_lower` are either-sign clipping and the dual-clip branch, not upper/lower | `metric_utils.py:460`; R0's own step 1 logged clip_ratio 0.03125 with max 3509 against a 4096 cap | [INC-005](analysis/incident_log.md) |
 | GRPO advantage extrema are a **free readout of group composition** — no extra instrumentation needed | R1 (G=8) logged exactly 2.4749 / 1.6202 / 1.2076, matching k=1,2,3 correct-of-8 under the unbiased (n−1) std | [grpo notes](docs/algorithms/grpo.md) |
-| `mini < train` makes clipping nonzero but **not yet informative**: at lr 1e-6 only ~0.015% of tokens clip, so ρ≈1 — a GSPO ratio comparison would still be near-vacuous | R1 `pg_clipfrac` 5.07e-5–2.61e-4 across all 20 updates | [gspo notes](docs/algorithms/gspo.md) |
+| **A near-zero `ppo_kl` does NOT mean ρ≈1** — it is a *signed* mean, so opposite deviations cancel. Measuring the distribution directly overturned an earlier conclusion drawn from it | `ppo_kl` flips sign across consecutive updates (+5.1e-5, −4.9e-5, +3.1e-5) while \|ρ−1\| p99 = 0.055 and max = 0.42; **8% of tokens deviate beyond 1%** | [ratio distribution](analysis/ratio_distribution.md) |
+| Clip-Higher has little to act on — but because the **band is narrow**, not because ρ is tight: only 0.05% of tokens deviate beyond 20%, and (1.2, 1.28] is a slice of that | R2 `pg_clipfrac` 5.2e-5→7.3e-5 when the upper clip moved 0.2→0.28 | [R1 vs R2](analysis/R1_vs_R2.md) |
 | Vanilla GRPO showed **no runaway response-length growth** over 20 updates at lr 1e-6 — a null result that constrains when the Dr.GRPO bias can even be observed | R1 `response_length/mean` oscillated 1192–2188 with no monotone trend | [dr.grpo notes](docs/algorithms/dr_grpo.md) |
 | The 8192-token budget **resolved the truncation contamination**: 5 of 2560 rollouts hit the cap | R1 configured-cap hits 0.20%, versus 87.11% at think@4096 | [R1 report](analysis/R1_baseline_report.md) |
 | Four infrastructure faults presented as something they were not | INC-001 split-routed proxy · INC-002 git subprocess proxy · INC-003 `uv --frozen` ignores `UV_DEFAULT_INDEX` (0.1 → 46.6 MB/s, ~460×) · INC-004 a `TypeError` disguised as a vLLM engine crash | [incident log](analysis/incident_log.md) |

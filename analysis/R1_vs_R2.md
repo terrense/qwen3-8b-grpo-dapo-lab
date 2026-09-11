@@ -130,6 +130,9 @@ DAPO 官方 recipe 用的是 `train_prompt_bsz=512 / mini_bsz=32`，也就是**�
 同理，**GSPO 那组照这个配置跑也是白跑** —— 它整个论点就是 token ratio vs sequence ratio
 的分布差异，而现在两个 ratio 都恒等于约 1。
 
+> **更正（2026-09-11，实测 ratio 分布后）**：上面这段关于「ρ≈1 / ratio 恒等于 1，所以 GSPO 测不出东西」的说法**是错的，已撤回**。实测 |ρ−1| 的 p99 是 0.055、极值到 0.42，**8% 的 token 偏离超过 1%** —— 分布是尖峰厚尾，不是窄。错在拿 `ppo_kl`（带符号均值，正负会抵消）当分布宽窄的判据。**GSPO 这个臂有东西可测，不需要先改配置。** clip-higher 作用小这条保留，但理由变成「(1.2, 1.28] 窄带里 token 太少，>20% 偏离的只占 0.05%」。证据见 [`ratio_distribution.md`](ratio_distribution.md)。
+
+
 ---
 
 ## 4. 顺手确认的两件事
