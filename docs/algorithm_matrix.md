@@ -129,7 +129,7 @@ Paper: [arXiv 2507.18071](https://arxiv.org/pdf/2507.18071). **Natively implemen
 `compute_policy_loss_gspo`, `core_algos.py:1546-1610`.
 
 ```
-actor_rollout_ref.actor.policy_loss.policy_loss_mode=gspo
+actor_rollout_ref.actor.policy_loss.loss_mode=gspo
 actor_rollout_ref.actor.loss_agg_mode=seq-mean-token-mean   # recommended in the docstring
 ```
 

@@ -150,7 +150,7 @@ Summary statistics only — never dump the full ratio tensor.
 ## Config
 
 ```
-actor_rollout_ref.actor.policy_loss.policy_loss_mode=gspo
+actor_rollout_ref.actor.policy_loss.loss_mode=gspo
 actor_rollout_ref.actor.loss_agg_mode=seq-mean-token-mean   # recommended in the docstring
 actor_rollout_ref.actor.clip_ratio_low=0.2
 actor_rollout_ref.actor.clip_ratio_high=0.2

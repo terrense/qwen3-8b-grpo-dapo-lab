@@ -17,6 +17,6 @@
 set -xeuo pipefail
 LAB=${LAB:-/root/autodl-tmp/rl_lab}
 exec bash "$LAB/scripts/training/run_r1_grpo_baseline.sh" \
-    actor_rollout_ref.actor.policy_loss.policy_loss_mode=gspo \
+    actor_rollout_ref.actor.policy_loss.loss_mode=gspo \
     actor_rollout_ref.actor.loss_agg_mode=seq-mean-token-mean \
     "$@"
