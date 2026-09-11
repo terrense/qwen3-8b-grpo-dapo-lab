@@ -290,24 +290,31 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| Infrastructure validation | **PASS** |
-| CUDA 13 / torch 2.11 stack | **PASS** |
-| Qwen3-8B via vLLM 0.24 | **PASS** |
-| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
-| RLVR verifier gate | **PASS** |
-| Flight recorder | **ACTIVE** |
-| R0 — GRPO smoke | **IN PROGRESS** |
-| R1 — Vanilla GRPO | **NOT RUN** |
-| R2 — DAPO | **NOT RUN** |
-| R3 — Failure injection | **NOT RUN** |
+| 硬件 / CUDA13 / NCCL / RLVR verifier gate | **PASS** |
+| R0 · R1 · R2(DAPO) · GSPO smoke | **PASS** |
+| ratio 分布观测补丁（58 行插入 / 0 行删除） | **PASS** |
+| M20 三臂 matched（GRPO/GSPO/DAPO） | **PASS** |
+| 五臂消融（+C_aggonly 分离变量, +E 修混杂, 验证集 1500） | **PASS** |
+| **[RL 工程总报告](analysis/FINAL_RL_ENGINEERING_REPORT.md)** · **[25 条踩坑](analysis/BUG_LOG.md)** | **已完成** |
+| R3 失败注入 · checkpoint/resume · **多 seed** | **NOT RUN** |
 
-**Live run** `E_drgrpo_scaled` · step **19** ·
-health **GREEN** · reward -0.0781 ·
-KL -0.00004 · entropy 0.2210 ·
-effective signal 0.62 ·
-incidents 2
+**最重要的发现**：同一个算法（vanilla GRPO）跑两次，**reward 符号翻转（+0.159 vs −0.097）、
+回答长度差 65%**，而机制类指标（ratio 分布、advantage 尺度）复现到 **1~3%**。
+所以所有臂在 validation 上最大 1.1 个标准误的差异**全在噪声里** ——
+**n=1 的 20-update 运行能验证机制，不能比较效果。**
 
-_Auto-updated 2026-09-11T20:25:34 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+**站得住的机制结论**：GSPO 的 sequence ratio 压缩约 √|y| ≈ 40 倍（符合中心极限），
+但 **clipping 从未触发**（23 个 update 的 clipfrac 全为 0），效果只能来自 loss 聚合方式；
+DAPO 的 dynamic sampling 让 batch **100% 有效**（GRPO 只有 58%，且废组不随训练减少，
+只从"太难"变成"太简单"），代价 rollout 时间 1.93 倍，**买的是确定性不是效率**；
+Dr.GRPO 的 advantage 尺度精确等于去掉 std 归一化的理论值（1.675 vs 理论 1.75/1.50），
+且与 loss 聚合方式完全正交。
+
+**抓到的三个会毁掉实验的混杂**：`loss_scale_factor` 悄悄把有效学习率降到 1/4.3；
+Dr.GRPO 长度偏差的"确认"有 85% 是难度混杂（配对后 1.6→1.09）；
+监控器自己的 robust-z 在低离散指标上把 4.3% 的波动报成 z=112。
+
+[消融](analysis/ABLATION.md) · [三臂对比](analysis/ALGORITHM_COMPARISON.md) · [ratio 分布](analysis/ratio_distribution.md) · [长度配对](analysis/length_bias_paired.md)
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically
