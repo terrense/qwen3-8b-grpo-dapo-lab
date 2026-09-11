@@ -290,24 +290,20 @@ Definitions and the real VeRL key behind each metric:
 <!-- STATUS_START -->
 | Stage | Status |
 |---|---|
-| Infrastructure validation | **PASS** |
-| CUDA 13 / torch 2.11 stack | **PASS** |
-| Qwen3-8B via vLLM 0.24 | **PASS** |
-| 4-GPU NCCL (349.8 GB/s busBW) | **PASS** |
-| RLVR verifier gate | **PASS** |
-| Flight recorder | **ACTIVE** |
-| R0 — GRPO smoke | **IN PROGRESS** |
-| R1 — Vanilla GRPO | **NOT RUN** |
-| R2 — DAPO | **NOT RUN** |
-| R3 — Failure injection | **NOT RUN** |
+| Infrastructure / CUDA 13 / 4-GPU NCCL / verifier gate | **PASS** |
+| R0 — GRPO smoke | **PASS** · 2 updates |
+| R1 — vanilla GRPO baseline | **PASS** · 20 updates |
+| R2 — DAPO smoke | **PASS** · 2 updates |
+| **R_gspo — GSPO smoke** | **PASS** · 3 updates |
+| Ratio-distribution instrumentation | **PASS** · patched + CPU self-tested |
+| 20-update matched comparison | **NOT RUN** |
+| Dr.GRPO / VAPO / R3 failure injection | **NOT RUN** |
 
-**Live run** `R_gspo_smoke` · step **3** ·
-health **GREEN** · reward -0.4062 ·
-KL -0.00000 · entropy 0.4437 ·
-effective signal 0.50 ·
-incidents 0
-
-_Auto-updated 2026-09-11T09:05:51 by `scripts/monitoring/github_sync.py`. Full status: [`status/latest.md`](status/latest.md)._
+**GSPO 的机制第一次被直接量到**：同样配置下 token ratio 的 |ρ−1| p99 = 0.055、
+极值 0.42、**8% 的 token 偏离 >1%**；而 sequence ratio 的 p99 = 5.4e-4、极值 1.1e-3、
+**0% 的 token 偏离 >1%**，clipfrac 恒为 0。尾巴走向还相反 —— GRPO 三步内变宽
+(0.301→0.416)，GSPO 三步内收窄 (1.08e-3→7.46e-4)。
+[GSPO vs GRPO](analysis/gspo_vs_grpo_ratio.md) · [ratio 分布](analysis/ratio_distribution.md) · [踩坑记录](analysis/BUG_LOG.md)
 <!-- STATUS_END -->
 
 The status block above is the only region of this file written automatically
